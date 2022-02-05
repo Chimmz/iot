@@ -6,14 +6,16 @@ const makeRequest = function ({ url, method, body, headers }) {
 
 class API {
    loginUser = async function (username, password) {
-      const url = `https://dev-ams-core-api-app.azurewebsites.net/api/Auth/token?username=${username}&password=${password}`;
-
       const res = await makeRequest({
-         url,
+         url: `https://dev-ams-core-api-app.azurewebsites.net/api/Auth/token`,
          method: 'POST',
-         headers: { 'Content-Type': 'application/json' }
+         body: JSON.stringify({ username, password }),
+         headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+         }
       });
-      console.log('RES: ', res);
+      return res;
    };
 }
 

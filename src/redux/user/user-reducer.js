@@ -1,16 +1,21 @@
-import { CHANGE_NAME } from './user-actions';
+import { RESET_USER, SET_USER } from './user-actions';
 
-const initState = {
-   name: 'Chima',
-   password: 'chima125'
-};
+const initState = { isLoggedIn: false, currentUser: {} };
 
 const userReducer = function (state = initState, action) {
    const { type, payload } = action;
 
    switch (type) {
-      case CHANGE_NAME:
-         return { ...state, name: payload.name };
+      case SET_USER:
+         const { user, token, ...rest } = payload;
+         return {
+            ...rest,
+            currentUser: user,
+            isLoggedIn: Boolean(token?.length)
+         };
+
+      case RESET_USER:
+         return { isLoggedIn: false, currentUser: {} };
 
       default:
          return state;

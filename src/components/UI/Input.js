@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 function Input(props) {
    const inputRef = useRef();
-   const [userInput, setUserInput] = useState(props.initValue || '');
+   const [userInput, setUserInput] = useState(props.initValue ?? '');
 
    useEffect(() => props.uponChange(props.name, userInput), [userInput]);
 

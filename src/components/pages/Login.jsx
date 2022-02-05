@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { loginUser } from '../../redux/user/user-action-creators';
-import { selectUsername } from '../../redux/user/user-selectors';
+import { selectUserLoggedIn } from '../../redux/user/user-selectors';
 
 import Input from '../UI/Input';
 import './Login.css';
 
-function Login({ dispatch }) {
+function Login({ isLoggedIn, dispatch }) {
+   const navigate = useNavigate();
    const [userData, setUserData] = useState({ username: '', password: '' });
+
+   if (isLoggedIn) return <Navigate replace to='/dashboard'></Navigate>;
 
    const handleChange = (field, value) => {
       setUserData(prevState => ({ ...prevState, [field]: value }));
@@ -16,12 +20,10 @@ function Login({ dispatch }) {
 
    const submitHandler = ev => {
       ev.preventDefault();
-      const { username, password } = userData;
-      // console.log(username, password);
-      dispatch(loginUser(username, password));
+      dispatch(
+         loginUser(userData.username.trim(), userData.password.trim(), navigate)
+      );
    };
-
-   // console.log(props.username);
 
    return (
       <div className='container h-100'>
@@ -76,7 +78,7 @@ function Login({ dispatch }) {
 }
 
 const mapStateToProps = createStructuredSelector({
-   username: selectUsername
+   isLoggedIn: selectUserLoggedIn
 });
 
 export default connect(mapStateToProps)(Login);

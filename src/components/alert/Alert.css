@@ -1,0 +1,22 @@
+.alerts {
+   position: fixed;
+   top: 0;
+   left: 50%;
+   transform: translateX(-50%);
+   z-index: 25;
+}
+
+.alert {
+   padding: 1.5rem 3rem;
+   font-size: 1.5rem;
+   text-align: center;
+   /* animation: slide-down 0.2s forwards; */
+}
+.alert.error {
+   background-color: #ffeeee;
+   color: #f31c1c;
+}
+.alert.success {
+   background: #e7ffe7;
+   color: #199e19;
+}

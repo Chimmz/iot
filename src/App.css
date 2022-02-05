@@ -8,9 +8,33 @@
    box-sizing: border-box;
 }
 
+html {
+   font-size: 62.5%;
+   scroll-behavior: smooth;
+}
+/* Tab landscape and smaller */
+@media (max-width: 75em) {
+   html {
+      font-size: 56.25%;
+   }
+}
+/* Tab portrait and smaller */
+@media (max-width: 56.25em) {
+   html {
+      font-size: 50%;
+   }
+}
+/* Big desktop and larger */
+@media (min-width: 112.5em) {
+   html {
+      font-size: 75%;
+   }
+}
+
 body {
-   font-family: 'Roboto', sans-serif;
    min-height: 100vh;
+   font-size: 1rem;
+   font-family: 'Roboto', sans-serif;
    color: #3a3e42;
 }
 
