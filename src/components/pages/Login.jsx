@@ -1,34 +1,42 @@
-import React, { useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { loginUser } from '../../redux/user/user-action-creators';
-import { selectUserLoggedIn } from '../../redux/user/user-selectors';
+import {
+   selectUserLoggedIn,
+   selectUserStatusMsg
+} from '../../redux/user/user-selectors';
 
 import Input from '../UI/Input';
 import './Login.css';
+import Form from '../UI/Form';
 
-function Login({ isLoggedIn, dispatch }) {
+function Login({ isLoggedIn, userStatusMsg, dispatch }) {
    const navigate = useNavigate();
    const [userData, setUserData] = useState({ username: '', password: '' });
 
-   if (isLoggedIn) return <Navigate replace to='/dashboard'></Navigate>;
+   if (isLoggedIn) return <Navigate replace to='/dashboard' />;
 
    const handleChange = (field, value) => {
       setUserData(prevState => ({ ...prevState, [field]: value }));
    };
 
-   const submitHandler = ev => {
+   const handleSubmit = ev => {
       ev.preventDefault();
       dispatch(
          loginUser(userData.username.trim(), userData.password.trim(), navigate)
       );
    };
 
+   // dhanush.s@tonkabi.com
+   // ravi.shankar@tonkabi.com
+   // root123+
+
    return (
       <div className='container h-100'>
          <div className='row h-100 justify-content-center align-items-center'>
-            <form className='col-md-9' onSubmit={submitHandler}>
+            <Form className='col-md-9' submitHandler={handleSubmit}>
                <div className='IOTForm shadow-lg'>
                   <div className='row'>
                      <div className='col-md-6'>
@@ -71,14 +79,15 @@ function Login({ isLoggedIn, dispatch }) {
                      </div>
                   </div>
                </div>
-            </form>
+            </Form>
          </div>
       </div>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
-   isLoggedIn: selectUserLoggedIn
+   isLoggedIn: selectUserLoggedIn,
+   userStatusMsg: selectUserStatusMsg
 });
 
 export default connect(mapStateToProps)(Login);

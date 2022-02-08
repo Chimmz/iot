@@ -1,7 +1,18 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
+
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectUserStatusMsg } from '../../redux/user/user-selectors';
+
 import Input from '../UI/Input';
 
 function ChangePassword(props) {
+   const { userStatusMsg } = props;
+
+   if (userStatusMsg !== 'DEFAULT_PASSWORD')
+      return <Navigate to='/dashboard' />;
+
    return (
       <div className='container h-100'>
          <div className='row h-100 justify-content-center align-items-center'>
@@ -15,7 +26,7 @@ function ChangePassword(props) {
                         <div className='IOTFormLeft'>
                            <h1>Forget Password</h1>
                            <div className='form-group position-relative mb-4'>
-                              <input
+                              <Input
                                  type='email'
                                  className='form-control border-0 border-bottom rounded-0 shadow-none'
                                  id='email'
@@ -37,4 +48,8 @@ function ChangePassword(props) {
    );
 }
 
-export default ChangePassword;
+const mapStateToProps = createStructuredSelector({
+   userStatusMsg: selectUserStatusMsg
+});
+
+export default connect(mapStateToProps)(ChangePassword);

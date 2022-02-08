@@ -4,7 +4,7 @@ function Input(props) {
    const inputRef = useRef();
    const [userInput, setUserInput] = useState(props.initValue ?? '');
 
-   useEffect(() => props.uponChange(props.name, userInput), [userInput]);
+   useEffect(() => props.uponChange?.(props.name, userInput), [userInput]);
 
    const handleChange = ev => setUserInput(inputRef.current.value);
    const reset = () => setUserInput('');

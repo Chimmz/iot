@@ -8,7 +8,7 @@ import './Alert.css';
 // import Alert from './Alert';
 
 function Alerts({ alerts }) {
-   console.log('All alerts: ', alerts);
+   // console.log('All alerts: ', alerts);
 
    if (!alerts?.length) return <></>;
 
