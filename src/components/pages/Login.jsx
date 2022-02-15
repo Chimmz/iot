@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { loginUser } from '../../redux/user/user-action-creators';
+import * as userCreators from '../../redux/user/user-action-creators';
 import {
    selectUserLoggedIn,
    selectUserStatusMsg
@@ -25,13 +25,14 @@ function Login({ isLoggedIn, userStatusMsg, dispatch }) {
    const handleSubmit = ev => {
       ev.preventDefault();
       dispatch(
-         loginUser(userData.username.trim(), userData.password.trim(), navigate)
+         userCreators.login(userData.username.trim(), userData.password.trim())
       );
    };
 
    // dhanush.s@tonkabi.com
    // ravi.shankar@tonkabi.com
    // root123+
+   // https://ams-iot-dev.azurewebsites.net/api/Auth/login
 
    return (
       <div className='container h-100'>
@@ -68,7 +69,9 @@ function Login({ isLoggedIn, userStatusMsg, dispatch }) {
                            </div>
                            <div className='row mt-4 mb-4'>
                               <div className='col-md-12 text-right'>
-                                 <a href='#'>Forgot Password?</a>
+                                 <Link to='/change-password'>
+                                    Forgot Password
+                                 </Link>
                               </div>
                            </div>
 

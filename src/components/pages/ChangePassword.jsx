@@ -1,22 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectUserStatusMsg } from '../../redux/user/user-selectors';
+import {
+   selectCurrentUser,
+   selectUserStatusMsg,
+   selectUserToken
+} from '../../redux/user/user-selectors';
+
+import { flashAlert } from '../../redux/alert/alert-creators';
+import * as userCreators from '../../redux/user/user-action-creators';
+import * as alertUtils from '../../redux/alert/alert-utils';
 
 import Input from '../UI/Input';
 
-function ChangePassword(props) {
-   const { userStatusMsg } = props;
+function ResetPassword({ currentUser, userToken, dispatch }) {
+   // console.log('currentUser, userToken: ', currentUser, userToken);
 
-   if (userStatusMsg !== 'DEFAULT_PASSWORD')
-      return <Navigate to='/dashboard' />;
+   const [passwords, setPasswords] = useState({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+   });
+
+   const handleChange = (name, value) => {
+      setPasswords(prevState => ({ ...prevState, [name]: value }));
+   };
+
+   const submitHandler = ev => {
+      ev.preventDefault();
+
+      const { currentPassword, newPassword, confirmPassword } = passwords;
+
+      if (Object.values(passwords).some(input => !input?.length)) {
+         return dispatch(
+            flashAlert(
+               new alertUtils.Alert('Password field cannot be empty', 'error')
+            )
+         );
+      }
+
+      if (newPassword !== confirmPassword) {
+         return dispatch(
+            flashAlert(new alertUtils.Alert('Passwords do not match', 'error'))
+         );
+      }
+
+      dispatch(
+         userCreators.changePassword(
+            currentUser.userId,
+            currentPassword,
+            newPassword,
+            userToken
+         )
+      );
+   };
 
    return (
       <div className='container h-100'>
          <div className='row h-100 justify-content-center align-items-center'>
-            <form className='col-md-9'>
+            <form className='col-md-9' onSubmit={submitHandler}>
                <div className='IOTForm shadow-lg'>
                   <div className='row'>
                      <div className='col-md-6'>
@@ -24,19 +68,36 @@ function ChangePassword(props) {
                      </div>
                      <div className='col-md-6 d-flex justify-content-center align-items-center'>
                         <div className='IOTFormLeft'>
-                           <h1>Forget Password</h1>
+                           <h1>Change Password</h1>
                            <div className='form-group position-relative mb-4'>
                               <Input
-                                 type='email'
+                                 type='password'
                                  className='form-control border-0 border-bottom rounded-0 shadow-none'
-                                 id='email'
-                                 placeholder='Email Address'
+                                 name='currentPassword'
+                                 placeholder='Enter your current password'
+                                 uponChange={handleChange}
+                              />
+                              <Input
+                                 type='password'
+                                 className='form-control border-0 border-bottom rounded-0 shadow-none'
+                                 name='newPassword'
+                                 placeholder='Enter new password'
+                                 uponChange={handleChange}
+                              />
+                              <Input
+                                 type='password'
+                                 className='form-control border-0 border-bottom rounded-0 shadow-none'
+                                 name='confirmPassword'
+                                 placeholder='Confirm new password'
+                                 uponChange={handleChange}
                               />
                               <i className='bi bi-envelope'></i>
                            </div>
 
-                           <button className='btn btn-success btn-block shadow border-0 py-2 text-uppercase '>
-                              Send Email
+                           <button
+                              className='btn btn-success btn-block shadow border-0 py-2 text-uppercase '
+                              type='submit'>
+                              Reset password
                            </button>
                         </div>
                      </div>
@@ -47,9 +108,11 @@ function ChangePassword(props) {
       </div>
    );
 }
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQiLCJuYmYiOjE2NDQ4ODQ3MTQsImV4cCI6MTY0NDg4ODMxNCwiaWF0IjoxNjQ0ODg0NzE0fQ.t-mcNkAadUpyUsjtv4q-GtuzBxiffz3La83fB4jEljk
 
 const mapStateToProps = createStructuredSelector({
-   userStatusMsg: selectUserStatusMsg
+   currentUser: selectCurrentUser,
+   userToken: selectUserToken
 });
 
-export default connect(mapStateToProps)(ChangePassword);
+export default connect(mapStateToProps)(ResetPassword);

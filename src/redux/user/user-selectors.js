@@ -14,5 +14,7 @@ export const selectUserLoggedIn = createSelector(
 
 export const selectUserStatusMsg = createSelector(
    [selectUser],
-   user => user.userStatusMsg
+   user => user.message
 );
+
+export const selectUserToken = createSelector([selectUser], user => user.token);

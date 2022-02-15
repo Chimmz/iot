@@ -8,11 +8,16 @@ import { selectUserLoggedIn } from './redux/user/user-selectors';
 import Login from './components/pages/Login';
 import Alerts from './components/alert/Alerts';
 import Dashboard from './components/pages/Dashboard';
+import ForgotPassword from './components/pages/ForgotPassword';
+import ChangePassword from './components/pages/ChangePassword';
 
 // import ProtectedRoute from './components/HOC/ProtectedRoute';
 
 import './App.css';
-import ChangePassword from './components/pages/ChangePassword';
+
+import { store } from './redux/store';
+
+// store.dispatch({ type: 'LOGOUT_USER' });
 
 function App({ isLoggedIn }) {
    console.log('isLoggedIn: ', isLoggedIn);
@@ -28,15 +33,31 @@ function App({ isLoggedIn }) {
                   isLoggedIn ? <Dashboard /> : <Navigate replace to='/login' />
                }
             />
-            <Route path='/change-password' element={<ChangePassword />} />
+            <Route
+               path='/reset-password'
+               element={
+                  isLoggedIn ? (
+                     <ForgotPassword />
+                  ) : (
+                     <Navigate replace to='/login' />
+                  )
+               }
+            />
+            <Route
+               path='/change-password'
+               element={
+                  isLoggedIn ? (
+                     <ChangePassword />
+                  ) : (
+                     <Navigate replace to='/login' />
+                  )
+               }
+            />
          </Routes>
       </>
    );
 }
 
-{
-   /* <ProtectedRoute path='/dashboard' Component={<Dashboard />} /> */
-}
 const mapStateToProps = createStructuredSelector({
    isLoggedIn: selectUserLoggedIn
 });

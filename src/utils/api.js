@@ -1,21 +1,28 @@
-const makeRequest = function ({ url, method, body, headers }) {
-   return fetch(url, { method, body, headers })
-      .then(response => response.json())
-      .catch(console.log);
-};
-
 class API {
+   #makeRequest = ({ url, ...rest }) => {
+      return fetch(url, { ...rest })
+         .then(response => response.json())
+         .catch(console.log);
+   };
+
    loginUser = async function (username, password) {
-      const res = await makeRequest({
-         url: `https://dev-ams-core-api-app.azurewebsites.net/api/Auth/token`,
+      return await this.#makeRequest({
          method: 'POST',
+         url: 'https://ams-iot-dev.azurewebsites.net/api/Auth/login',
          body: JSON.stringify({ username, password }),
-         headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-         }
+         headers: { 'Content-Type': 'application/json' }
       });
-      return res;
+   };
+
+   changePassword = async function (...details) {
+      const [userId, currentPassword, newPassword, userToken] = details;
+
+      return await this.#makeRequest({
+         method: 'POST',
+         url: 'https://ams-iot-dev.azurewebsites.net/api/Auth/ChangePassword',
+         body: JSON.stringify({ userId, currentPassword, newPassword }),
+         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userToken}` }
+      });
    };
 }
 

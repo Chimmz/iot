@@ -1,4 +1,4 @@
-import { RESET_USER, SET_USER } from './user-actions';
+import { RESET_USER, SET_USER, LOGOUT_USER } from './user-actions';
 
 const initState = { isLoggedIn: false, currentUser: {} };
 
@@ -7,14 +7,15 @@ const userReducer = function (state = initState, action) {
 
    switch (type) {
       case SET_USER:
-         const { user, token, ...rest } = payload;
+         const { userDetails, ...rest } = payload;
          return {
-            ...rest,
-            currentUser: user,
-            isLoggedIn: Boolean(token?.length)
+            currentUser: userDetails,
+            isLoggedIn: Boolean(rest.token?.length),
+            ...rest
          };
 
       case RESET_USER:
+      case LOGOUT_USER:
          return { isLoggedIn: false, currentUser: {} };
 
       default:
