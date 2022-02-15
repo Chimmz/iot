@@ -11,6 +11,45 @@ export const setUser = userDetails => ({
 export const resetUser = () => ({ type: RESET_USER });
 export const logout = () => ({ type: LOGOUT_USER });
 
+export const login = (username, password, showTermsAndCond) => {
+   return async dispatch => {
+      const handleFailure = msg =>
+         dispatch(flashAlert(new Alert(msg, 'error')));
+
+      try {
+         const res = await API.loginUser(username, password);
+         console.log(res);
+         if (!res.userDetails.isAccepted) showTermsAndCond();
+
+         switch (res.message) {
+            case 'BAD_CREDENTIALS':
+               // console.log('In BAD_CREDENTIALS');
+               handleFailure('Your username or password is incorrect');
+               break;
+
+            case 'ACCOUNT_LOCKED':
+               // console.log('In ACCOUNT_LOCKED');
+               // dispatch(setUser(res));
+               handleFailure('Your account is currently locked');
+               break;
+
+            case 'DEFAULT_PASSWORD':
+               // console.log('In DEFAULT_PASSWORD');
+               dispatch(setUser(res));
+               break;
+
+            case 'USER_VALID':
+               // console.log('In USER_VALID');
+               dispatch(setUser(res));
+               dispatch(flashAlert(new Alert('Login successful', 'success')));
+               break;
+         }
+      } catch (err) {
+         handleFailure('Sorry, something wrong has happened');
+      }
+   };
+};
+
 export const changePassword = (...details) => {
    return async dispatch => {
       try {
@@ -38,37 +77,15 @@ export const changePassword = (...details) => {
    };
 };
 
-export const login = (username, password) => async dispatch => {
-   const handleFailure = msg => dispatch(flashAlert(new Alert(msg, 'error')));
+export const resetPassword = (email, userToken) => async dispatch => {
+   const res = await API.resetPassword(email, userToken);
+   console.log(res);
 
-   try {
-      const res = await API.loginUser(username, password);
-      console.log(res);
+   if (res.status === 400)
+      return dispatch(
+         flashAlert(new Alert('Something wrong occurred', 'error'))
+      );
 
-      switch (res.message) {
-         case 'BAD_CREDENTIALS':
-            // console.log('In BAD_CREDENTIALS');
-            handleFailure('Your username or password is incorrect');
-            break;
-
-         case 'ACCOUNT_LOCKED':
-            // console.log('In ACCOUNT_LOCKED');
-            // dispatch(setUser(res));
-            handleFailure('Your account is currently locked');
-            break;
-
-         case 'DEFAULT_PASSWORD':
-            // console.log('In DEFAULT_PASSWORD');
-            dispatch(setUser(res));
-            break;
-
-         case 'USER_VALID':
-            // console.log('In USER_VALID');
-            dispatch(setUser(res));
-            dispatch(flashAlert(new Alert('Login successful', 'success')));
-            break;
-      }
-   } catch (err) {
-      handleFailure('Sorry, something wrong has happened');
-   }
+   // const { message, defaultPassword } = res;
+   dispatch(flashAlert(new Alert(res.message, 'success')));
 };

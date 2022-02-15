@@ -1,0 +1,51 @@
+.dialog {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   width: 75ch;
+   transform: translate(-50%, -50%);
+   background: #fff;
+   font-size: 2rem;
+   display: flex;
+   flex-direction: column;
+   gap: 4rem;
+   padding: 3rem 5rem;
+   max-height: 70vh;
+   overflow-y: scroll;
+}
+.dialog-header {
+   display: flex;
+   justify-content: space-between;
+   padding-bottom: 2rem;
+   border-bottom: 1px solid #f1f1f1;
+}
+.dialog-footer {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+.i-accept {
+   display: flex;
+   gap: 1rem;
+   align-items: center;
+}
+/* .modal {
+   position: relative;
+   z-index: 333;
+}
+
+#text {
+   display: none;
+}
+.modal-body {
+   max-height: 400px;
+   overflow-y: scroll;
+}
+.read-btn {
+   position: fixed;
+   bottom: 45%;
+   left: 45%;
+   width: 70vw;
+   max-height: 60vh;
+   overflow-y: scroll;
+} */

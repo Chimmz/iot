@@ -21,7 +21,21 @@ class API {
          method: 'POST',
          url: 'https://ams-iot-dev.azurewebsites.net/api/Auth/ChangePassword',
          body: JSON.stringify({ userId, currentPassword, newPassword }),
-         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userToken}` }
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`
+         }
+      });
+   };
+
+   resetPassword = async function (email, userToken) {
+      return await this.#makeRequest({
+         method: 'POST',
+         url: `https://ams-iot-dev.azurewebsites.net/api/Auth/ResetPassword?emailId=${email}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`
+         }
       });
    };
 }

@@ -97,7 +97,7 @@ function ResetPassword({ currentUser, userToken, dispatch }) {
                            <button
                               className='btn btn-success btn-block shadow border-0 py-2 text-uppercase '
                               type='submit'>
-                              Reset password
+                              Change password
                            </button>
                         </div>
                      </div>
@@ -108,7 +108,6 @@ function ResetPassword({ currentUser, userToken, dispatch }) {
       </div>
    );
 }
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQiLCJuYmYiOjE2NDQ4ODQ3MTQsImV4cCI6MTY0NDg4ODMxNCwiaWF0IjoxNjQ0ODg0NzE0fQ.t-mcNkAadUpyUsjtv4q-GtuzBxiffz3La83fB4jEljk
 
 const mapStateToProps = createStructuredSelector({
    currentUser: selectCurrentUser,
