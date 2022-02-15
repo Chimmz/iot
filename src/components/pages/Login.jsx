@@ -78,7 +78,7 @@ function Login({ isLoggedIn, dispatch }) {
                               </div>
                               <div className='row mt-4 mb-4'>
                                  <div className='col-md-12 text-right'>
-                                    <Link to='/change-password'>
+                                    <Link to='/reset-password'>
                                        Forgot Password
                                     </Link>
                                  </div>

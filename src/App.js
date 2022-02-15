@@ -39,16 +39,7 @@ function App({ isLoggedIn }) {
                }
             />
 
-            <Route
-               path='/reset-password'
-               element={
-                  isLoggedIn ? (
-                     <ResetPassword />
-                  ) : (
-                     <Navigate replace to='/login' />
-                  )
-               }
-            />
+            <Route path='/reset-password' element={<ResetPassword />} />
          </Routes>
       </>
    );
