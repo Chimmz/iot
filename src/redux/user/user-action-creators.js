@@ -15,11 +15,19 @@ export const changePassword = (...details) => {
    return async dispatch => {
       try {
          const res = await API.changePassword(...details);
+         console.log(res);
 
-         if (res.message.toLowerCase().includes('Password change failed'))
-            return dispatch(flashAlert(new Alert(res.message)));
+         const failure = res.message
+            .toLowerCase()
+            .includes('password change failed');
 
-         dispatch(flashAlert(new Alert(res.message, 'success')));
+         dispatch(
+            flashAlert(new Alert(res.message, failure ? 'error' : 'success'))
+         );
+
+         if (!failure) {
+            // Do sth upon success
+         }
       } catch (err) {
          dispatch(
             flashAlert(

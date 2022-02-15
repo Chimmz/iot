@@ -7,7 +7,7 @@ import { selectUserStatusMsg } from '../../redux/user/user-selectors';
 
 import Input from '../UI/Input';
 
-function ForgotPassword(props) {
+function ResetPassword(props) {
    return (
       <div className='container h-100'>
          <div className='row h-100 justify-content-center align-items-center'>
@@ -47,4 +47,4 @@ const mapStateToProps = createStructuredSelector({
    userStatusMsg: selectUserStatusMsg
 });
 
-export default connect(mapStateToProps)(ForgotPassword);
+export default connect(mapStateToProps)(ResetPassword);
