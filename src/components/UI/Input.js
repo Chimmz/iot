@@ -1,24 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import useInput from '../../hooks/useInput';
 
-function Input(props) {
-   const inputRef = useRef();
-   const [userInput, setUserInput] = useState(props.initValue ?? '');
-
-   useEffect(() => props.uponChange?.(props.name, userInput), [userInput]);
-
-   const handleChange = ev => setUserInput(inputRef.current.value);
-   const reset = () => setUserInput('');
-
+function Input({ type, value, handleChange, ...restProps }) {
    return (
-      <input
-         type={props.type || 'text'}
-         id={props.id}
-         className={props.className}
-         placeholder={props.placeholder}
-         value={userInput}
-         onChange={handleChange}
-         ref={inputRef}
-      />
+      <input type={type} value={value} onChange={handleChange} {...restProps} />
    );
 }
 

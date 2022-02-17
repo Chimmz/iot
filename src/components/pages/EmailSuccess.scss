@@ -1,0 +1,23 @@
+.email__verify__wrapp {
+   min-height: 100vh;
+   position: relative;
+   .logo {
+      min-width: 14rem;
+   }
+
+   .content__card {
+      max-width: 768px;
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      border-radius: 0.75rem;
+
+      .input__box {
+         margin: 2rem 0;
+         border-bottom: 1px solid var(--gray);
+      }
+   }
+}

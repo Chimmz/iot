@@ -1,107 +1,131 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+
+// Redux standard imports
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import * as userCreators from '../../redux/user/user-action-creators';
-import {
-   selectUserLoggedIn,
-   selectUserStatusMsg
-} from '../../redux/user/user-selectors';
 
+// Imports of redux state selectors, and action creators
+import * as userCreators from '../../redux/user/user-action-creators';
+import * as userSelectors from '../../redux/user/user-selectors';
+
+// Hooks
+import useInput from '../../hooks/useInput';
+import useModal from '../../hooks/useModal';
+
+// External components
 import Input from '../UI/Input';
-import './Login.css';
-import Form from '../UI/Form';
-import Modal from '../UI/Modal';
+
+// Standard bootstrap components
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { Button, Container } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+
+import './Login.scss';
+// dhanush.s@tonkabi.com
+// ravi.shankar@tonkabi.com
+// root123+
 
 function Login({ isLoggedIn, dispatch }) {
-   // const navigate = useNavigate();
-   const [userData, setUserData] = useState({ username: '', password: '' });
-   const [modalHidden, setmodalHidden] = useState(true);
-
-   if (isLoggedIn) return <Navigate replace to='/dashboard' />;
-
-   const handleChange = (field, value) => {
-      setUserData(prevState => ({ ...prevState, [field]: value }));
-   };
+   const [email, handleChangeEmail] = useInput('');
+   const [password, handleChangePassword] = useInput('');
 
    const handleSubmit = ev => {
       ev.preventDefault();
-      const showTermsAndCond = () => setmodalHidden(true);
-
-      dispatch(
-         userCreators.login(
-            userData.username.trim(),
-            userData.password.trim(),
-            showTermsAndCond
-         )
-      );
+      dispatch(userCreators.login(email.trim(), password.trim()));
    };
 
-   // dhanush.s@tonkabi.com
-   // ravi.shankar@tonkabi.com
-   // root123+
-   // https://ams-iot-dev.azurewebsites.net/api/Auth/login
-
+   if (isLoggedIn) return <Navigate replace to='/dashboard' />;
    return (
       <>
-         <div className='container h-100'>
-            <div className='row h-100 justify-content-center align-items-center'>
-               <Form className='col-md-9' submitHandler={handleSubmit}>
-                  <div className='IOTForm shadow-lg'>
-                     <div className='row'>
-                        <div className='col-md-6'>
-                           <div className='IOTFormRight position-relative d-flex justify-content-center flex-column align-items-center text-center p-5 text-white'></div>
-                        </div>
-                        <div className='col-md-6 d-flex justify-content-center align-items-center'>
-                           <div className='IOTFormLeft'>
-                              <h1>Login</h1>
-                              <div className='form-group position-relative mb-4'>
-                                 <Input
-                                    className='form-control border-0 border-bottom rounded-0 shadow-none'
-                                    id='username'
-                                    name='username'
-                                    placeholder='Username'
-                                    uponChange={handleChange}
-                                 />
-                                 <i className='bi bi-person'></i>
-                              </div>
-                              <div className='form-group position-relative mb-4'>
-                                 <Input
-                                    type='password'
-                                    className='form-control border-0 border-bottom rounded-0 shadow-none'
-                                    id='password'
-                                    name='password'
-                                    placeholder='Password'
-                                    uponChange={handleChange}
-                                 />
-                                 <i className='bi bi-key'></i>
-                              </div>
-                              <div className='row mt-4 mb-4'>
-                                 <div className='col-md-12 text-right'>
-                                    <Link to='/reset-password'>
-                                       Forgot Password
-                                    </Link>
-                                 </div>
-                              </div>
-
-                              <button className='btn btn-success btn-block shadow border-0 py-2 text-uppercase'>
-                                 Login
-                              </button>
-                           </div>
-                        </div>
+         <div className='auth__wrapper'>
+            <Container fluid className='px-0'>
+               <Row className='align-items-center g-0'>
+                  <Col
+                     lg={6}
+                     className='banner__wrapp bg-primary d-none d-lg-block'>
+                     <div className='text-center'>
+                        <img
+                           src='images/auth/loginn.gif'
+                           className='img-fluid'
+                           alt='main-auth-banner-image'
+                        />
                      </div>
-                  </div>
-               </Form>
-            </div>
+                  </Col>
+                  <Col lg={6}>
+                     <Form
+                        className='form__wrapp mx-auto'
+                        onSubmit={handleSubmit}>
+                        <p className='text-primary fs21'>
+                           Welcome to insuretek
+                        </p>
+                        <h1 className='text-primary mb-5 fw-bold'>Log in</h1>
+                        <InputGroup className='mb-3 mb-lg-4'>
+                           <InputGroup.Text id='email'>
+                              <img
+                                 src='images/icons/mail-gray.svg'
+                                 alt='mail-svg-icon'
+                              />
+                           </InputGroup.Text>
+                           <Form.Control
+                              type='email'
+                              value={email}
+                              onChange={handleChangeEmail}
+                              placeholder='E-mail'
+                              aria-label='E-mail'
+                              aria-describedby='email'
+                           />
+                        </InputGroup>
+
+                        <InputGroup className='mb-3 mb-lg-4'>
+                           <InputGroup.Text id='email'>
+                              <img
+                                 src='images/icons/lock-gray.svg'
+                                 alt='mail-svg-icon'
+                              />
+                           </InputGroup.Text>
+                           <Form.Control
+                              type='password'
+                              value={password}
+                              onChange={handleChangePassword}
+                              placeholder='Password'
+                              aria-label='Password'
+                              aria-describedby='email'
+                           />
+                        </InputGroup>
+                        <Button
+                           type='submit'
+                           variant='primary'
+                           className='btn btn-primary fw-bold w-100 d-block btn-lg'>
+                           Login
+                        </Button>
+
+                        <div className='d-flex justify-content-between align-items-center mt-3'>
+                           <Form.Group controlId='formBasicCheckbox'>
+                              <Form.Check type='checkbox' label='Remember me' />
+                           </Form.Group>
+                           <Link to='/forgot-password' className='fs18'>
+                              Forgot Password
+                           </Link>
+                        </div>
+                        <p className='fs10 copyright'>
+                           © Copyright 2022 | <Link to='/'>Terms of Use</Link> |{' '}
+                           <Link to='/'>Privacy Policy</Link>
+                        </p>
+                     </Form>
+                  </Col>
+               </Row>
+            </Container>
          </div>
-         <Modal hidden={modalHidden} hide={() => setmodalHidden(true)} />
       </>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
-   isLoggedIn: selectUserLoggedIn,
-   userStatusMsg: selectUserStatusMsg
+   isLoggedIn: userSelectors.selectUserLoggedIn,
+   userAcceptedTermsAndCond: userSelectors.selectUserAccepted
 });
 
 export default connect(mapStateToProps)(Login);

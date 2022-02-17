@@ -12,9 +12,14 @@ export const selectUserLoggedIn = createSelector(
    user => user.isLoggedIn
 );
 
+export const selectUserToken = createSelector([selectUser], user => user.token);
+
 export const selectUserStatusMsg = createSelector(
    [selectUser],
    user => user.message
 );
 
-export const selectUserToken = createSelector([selectUser], user => user.token);
+export const selectUserAccepted = createSelector(
+   [selectUser],
+   user => user.currentUser.isAccepted
+);

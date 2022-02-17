@@ -1,0 +1,72 @@
+// Auth Pages Styles
+.auth__wrapper {
+   min-height: 100vh;
+
+   .banner__wrapp {
+      min-height: 100vh;
+
+      img {
+         max-height: 100vh;
+         width: 100%;
+         object-fit: cover;
+         object-position: center center;
+      }
+   }
+
+   .form__wrapp {
+      max-width: 413px;
+      width: 100%;
+      position: relative;
+      padding: 1rem;
+   }
+
+   .input-group {
+      border-radius: 0.75rem;
+   }
+   .form-control,
+   .input-group-text {
+      font-size: 1.125rem;
+      color: var(--black);
+      background-color: var(--light-white);
+      border-color: var(--light-white);
+      height: 48px;
+
+      &::placeholder {
+         color: var(--gray);
+      }
+   }
+   .btn-primary {
+      border-radius: 3rem;
+      color: #fff;
+   }
+
+   .form-check-label {
+      font-size: 1.125rem;
+      padding-left: 0.25rem;
+   }
+
+   .copyright {
+      position: absolute;
+      bottom: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      text-align: center;
+   }
+}
+
+@media (max-width: 992px) {
+   .auth__wrapper {
+      .banner__wrapp {
+         min-height: auto;
+      }
+      .form__wrapp {
+         padding-top: 4rem;
+      }
+      .copyright {
+         position: unset;
+         transform: none;
+         padding-top: 21%;
+      }
+   }
+}

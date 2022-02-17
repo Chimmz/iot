@@ -1,20 +1,60 @@
-import React, { useState } from 'react';
-import { useToggle } from '../../hooks/useToggle';
-import './Modal.css';
+import React, { useState, useRef } from 'react';
 
-function Modal({ hidden, hide }) {
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
+// Redux selectors, action creators and utils
+import { setUserAccepted } from '../../redux/user/user-action-creators';
+import { selectUserStatusMsg } from '../../redux/user/user-selectors';
+import { flashAlert } from '../../redux/alert/alert-creators';
+import { Alert } from '../../redux/alert/alert-utils';
+
+// Hooks
+import { useToggle } from '../../hooks/useToggle';
+
+// External components
+import Form from './Form';
+import './Modal.css';
+import { useNavigate } from 'react-router-dom';
+
+function Modal({ hidden, hideModal, uerStatusMsg, dispatch }) {
+   console.log(uerStatusMsg);
+   const checkboxRef = useRef();
+   const navigate = useNavigate();
+
    if (hidden) return <></>;
+
+   const handleChange = ev => {
+      dispatch(setUserAccepted(checkboxRef.current.checked));
+   };
+
+   const handleSubmit = () => {
+      const userAcceptedTerms = checkboxRef.current.checked;
+
+      if (userAcceptedTerms) return hideModal();
+
+      dispatch(
+         flashAlert(
+            new Alert(
+               'Cannot proceed without accepting terms and conditions',
+               'error'
+            )
+         )
+      );
+
+      // navigate('/dashboard');
+   };
 
    return (
       <div className='dialog shadow-lg'>
          <div className='dialog-header'>
-            Terms & Conditions{' '}
+            Terms & Conditions
             <button
                type='button'
                className='btn-close'
                data-bs-dismiss='modal'
                aria-label='Close'
-               onClick={hide}></button>
+               onClick={hideModal}></button>
          </div>
          <div className='dialog-body'>
             <p>
@@ -40,19 +80,28 @@ function Modal({ hidden, hide }) {
                magna eget est lorem. Vel risus commodo viverra maecenas.
             </p>
          </div>
-         <form action='' className='dialog-footer'>
+         <Form className='dialog-footer' submitHandler={handleSubmit}>
             <div className='i-accept'>
-               <input type='checkbox' />
+               <input
+                  type='checkbox'
+                  onChange={handleChange}
+                  ref={checkboxRef}
+               />
                <label htmlFor=''>I accept</label>
             </div>
             <button
+               type='submit'
                className='btn btn-success btn-block shadow border-0 py-2 text-uppercase'
                style={{ fontSize: '1.7rem' }}>
                Continue
             </button>
-         </form>
+         </Form>
       </div>
    );
 }
 
-export default Modal;
+const mapStateToProps = createStructuredSelector({
+   uerStatusMsg: selectUserStatusMsg
+});
+
+export default connect(mapStateToProps)(Modal);

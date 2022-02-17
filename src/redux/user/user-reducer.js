@@ -1,4 +1,4 @@
-import { RESET_USER, SET_USER, LOGOUT_USER } from './user-actions';
+import { SET_USER, LOGOUT_USER, SET_USER_ACCEPTED } from './user-actions';
 
 const initState = { isLoggedIn: false, currentUser: {} };
 
@@ -14,7 +14,9 @@ const userReducer = function (state = initState, action) {
             ...rest
          };
 
-      case RESET_USER:
+      case SET_USER_ACCEPTED:
+         return { ...state, isAccepted: payload.isAccepted };
+
       case LOGOUT_USER:
          return { isLoggedIn: false, currentUser: {} };
 

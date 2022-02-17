@@ -28,14 +28,11 @@ class API {
       });
    };
 
-   resetPassword = async function (email, userToken) {
+   resetPassword = async function (email) {
       return await this.#makeRequest({
          method: 'POST',
          url: `https://ams-iot-dev.azurewebsites.net/api/Auth/ResetPassword?emailId=${email}`,
-         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+         headers: { 'Content-Type': 'application/json' }
       });
    };
 }

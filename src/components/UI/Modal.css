@@ -11,6 +11,7 @@
    gap: 4rem;
    padding: 3rem 5rem;
    max-height: 70vh;
+   max-width: 90%;
    overflow-y: scroll;
 }
 .dialog-header {
@@ -29,23 +30,3 @@
    gap: 1rem;
    align-items: center;
 }
-/* .modal {
-   position: relative;
-   z-index: 333;
-}
-
-#text {
-   display: none;
-}
-.modal-body {
-   max-height: 400px;
-   overflow-y: scroll;
-}
-.read-btn {
-   position: fixed;
-   bottom: 45%;
-   left: 45%;
-   width: 70vw;
-   max-height: 60vh;
-   overflow-y: scroll;
-} */
