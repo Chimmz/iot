@@ -1,0 +1,18 @@
+*,
+*::before,
+*::after {
+   padding: 0;
+   margin: 0;
+   box-sizing: border-box;
+}
+
+html {
+   font-size: 16px;
+}
+
+body {
+   min-height: 100vh;
+   font-size: 1rem;
+   font-family: 'Roboto', sans-serif;
+   color: #3a3e42;
+}

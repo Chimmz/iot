@@ -1,7 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
+// Standard bootstrap components
 import Container from 'react-bootstrap/Container';
 
-import { Link } from 'react-router-dom';
 import './EmailSuccess.scss';
 
 function EmailSuccess() {
@@ -9,6 +11,15 @@ function EmailSuccess() {
       <>
          <main className='email__verify__wrapp bg-primary'>
             <Container>
+               <div className='back' style={{ color: '#fff' }}>
+                  <Link to='/' style={{ color: '#fff' }}>
+                     <i className='fa fa-angle-left fs-5 me-2'></i>
+                  </Link>
+                  <span>Back to </span>
+                  <Link to='/login' style={{ color: '#ffcf75' }}>
+                     Login
+                  </Link>
+               </div>
                <div className='content__card p-4 p-lg-5 d-block z-index'>
                   <img
                      src='images/insuretek-logo.png'
@@ -21,14 +32,15 @@ function EmailSuccess() {
                         <img src='images/icons/check-circle.svg' alt='' />
                      </h3>
                   </div>
-                  <Link to='/createpassword'>Next page</Link>
+                  <Link to='/change-password'>Next page</Link>
                   <p>
                      Please check your inbox, and click in the received link to
                      reset password.
                   </p>
                   <p className='mb-0'>
                      If you didn’t receive the link,{' '}
-                     <Link to='/'>click here</Link> to resend the again.
+                     <Link to='/forgot-password'>click here</Link> to resend the
+                     again.
                   </p>
                </div>
             </Container>

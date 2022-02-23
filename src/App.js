@@ -10,13 +10,13 @@ import {
 } from './redux/user/user-selectors';
 
 // External components
-import Login from './components/pages/Login';
+import Login from './components/pages/auth/login/Login';
 import Alerts from './components/alert/Alerts';
-import Dashboard from './components/pages/Dashboard';
-import ForgotPassword from './components/pages/ForgotPassword';
-import ChangePassword from './components/pages/ChangePassword';
-import EmailSuccess from './components/pages/EmailSuccess';
-import ChangedPasswordSuccess from './components/pages/ChangedPasswordSuccess';
+import Dashboard from './components/pages/dashboard/Dashboard';
+import PasswordReset from './components/pages/auth/password-reset/PasswordReset';
+import ChangePassword from './components/pages/auth/change-password/ChangePassword';
+import EmailSuccess from './components/pages/auth/password-reset/success/EmailSuccess';
+import ChangedPasswordSuccess from './components/pages/auth/change-password/success/ChangedPasswordSuccess';
 
 import './App.scss';
 
@@ -58,7 +58,7 @@ function App({ loggedIn, userAcceptedTermsAndCond }) {
                }
             />
 
-            <Route path='/forgot-password' element={<ForgotPassword />} />
+            <Route path='/forgot-password' element={<PasswordReset />} />
             <Route path='/email-success' element={<EmailSuccess />} />
          </Routes>
       </>

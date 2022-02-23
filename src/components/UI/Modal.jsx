@@ -17,16 +17,16 @@ import Form from './Form';
 import './Modal.css';
 import { useNavigate } from 'react-router-dom';
 
-function Modal({ hidden, hideModal, uerStatusMsg, dispatch }) {
-   console.log(uerStatusMsg);
+function Modal(props) {
+   const { 'show-if': showIf, hideModal, dispatch } = props;
+
    const checkboxRef = useRef();
    const navigate = useNavigate();
 
-   if (hidden) return <></>;
+   if (!showIf) return <></>;
 
-   const handleChange = ev => {
+   const handleChange = ev =>
       dispatch(setUserAccepted(checkboxRef.current.checked));
-   };
 
    const handleSubmit = () => {
       const userAcceptedTerms = checkboxRef.current.checked;
@@ -91,8 +91,7 @@ function Modal({ hidden, hideModal, uerStatusMsg, dispatch }) {
             </div>
             <button
                type='submit'
-               className='btn btn-success btn-block shadow border-0 py-2 text-uppercase'
-               style={{ fontSize: '1.7rem' }}>
+               className='btn btn-success btn-block shadow border-0 py-2 text-uppercase'>
                Continue
             </button>
          </Form>
@@ -101,7 +100,7 @@ function Modal({ hidden, hideModal, uerStatusMsg, dispatch }) {
 }
 
 const mapStateToProps = createStructuredSelector({
-   uerStatusMsg: selectUserStatusMsg
+   userStatusMsg: selectUserStatusMsg
 });
 
 export default connect(mapStateToProps)(Modal);

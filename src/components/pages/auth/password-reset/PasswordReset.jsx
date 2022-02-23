@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 // Imports of redux state selectors, and action creators
-import * as userSelectors from '../../redux/user/user-selectors';
-import * as userCreators from '../../redux/user/user-action-creators';
-import { flashAlert } from '../../redux/alert/alert-creators';
-import * as alertUtils from '../../redux/alert/alert-utils';
+import * as userSelectors from '../../../../redux/user/user-selectors';
+import * as userCreators from '../../../../redux/user/user-action-creators';
+import { flashAlert } from '../../../../redux/alert/alert-creators';
+import * as alertUtils from '../../../../redux/alert/alert-utils';
 
 // Hooks
-import useInput from '../../hooks/useInput';
+import useInput from '../../../../hooks/useInput';
 
 // Boostrap imports
 import Container from 'react-bootstrap/Container';
@@ -22,25 +22,40 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 
-import Input from '../UI/Input';
-import './ForgotPassword.scss';
+// Imports of external custom components
+import InputField from '../../../UI/InputField';
+import Spinner from '../../../UI/spinner/Spinner';
+// import Input from '../UI/Input';
 
-function ForgotPassword({ dispatch }) {
-   const [email, handleEmailChange] = useInput('');
+import './PasswordReset.scss';
+
+function PasswordReset({ userState, dispatch }) {
    const navigate = useNavigate();
+   // prettier-ignore
+   const [email, onChangeEmail, runEmailValidators, emailErrors, setValidationErrors, clearEmail] =
+      useInput({
+         init: '',
+         validators: [
+            { isRequired: 'Please enter an email' },
+            { isEmail: 'Please enter a correct email' }
+         ]
+         // Key names (Ex: 'isEmpty', 'isEmail') must match a function name in /src/validators/inputValidator.js
+      });
 
-   const submitHandler = ev => {
+   const submitHandler = function (ev) {
       ev.preventDefault();
 
-      if (email) return dispatch(userCreators.resetPassword(email, navigate));
+      runEmailValidators();
+      if (emailErrors.length) return;
 
-      dispatch(
-         flashAlert(new alertUtils.Alert('Please enter your email', 'error'))
-      );
+      dispatch(userCreators.resetPassword(email, navigate));
+      clearEmail();
+      setValidationErrors([]); // To remove the isRequired validator triggered upon clearEmail()
    };
 
    return (
       <>
+         <Spinner show-if={userState.isLoading}></Spinner>
          <main className='forgot__password auth__wrapper py-5 position-relative'>
             <Container>
                <div className='back'>
@@ -73,13 +88,14 @@ function ForgotPassword({ dispatch }) {
                                     alt='mail-svg-icon'
                                  />
                               </InputGroup.Text>
-                              <Form.Control
+                              <InputField
                                  type='email'
                                  value={email}
-                                 onChange={handleEmailChange}
+                                 onChange={onChangeEmail}
                                  placeholder='E-mail'
                                  aria-label='E-mail'
                                  aria-describedby='email'
+                                 validationErrors={emailErrors}
                               />
                            </InputGroup>
 
@@ -118,7 +134,8 @@ function ForgotPassword({ dispatch }) {
    );
 }
 
-// const mapStateToProps = createStructuredSelector({
-// });
+const mapStateToProps = createStructuredSelector({
+   userState: userSelectors.selectUser
+});
 
-export default connect(null)(ForgotPassword);
+export default connect(mapStateToProps)(PasswordReset);

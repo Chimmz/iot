@@ -1,0 +1,19 @@
+.btn {
+   padding: 6px 12px 8px 12px;
+   display: inline-flex;
+   align-items: center;
+}
+
+.btn-primary {
+   color: var(--white);
+   padding: 0.4rem 1.2rem 0.2rem 1.2rem;
+   font-family: var(--body-font);
+}
+
+.btn-light {
+   color: #4f5c69;
+   font-size: 14px;
+   background-color: var(--white);
+   border-color: var(--white);
+   font-family: var(--body-font);
+}

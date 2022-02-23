@@ -1,12 +1,15 @@
 class API {
-   #makeRequest = ({ url, ...rest }) => {
-      return fetch(url, { ...rest })
-         .then(response => response.json())
-         .catch(console.log);
+   #makeRequest = async ({ url, ...rest }) => {
+      try {
+         const res = await fetch(url, { ...rest });
+         return await res.json();
+      } catch (err) {
+         console.log(err.message);
+      }
    };
 
-   loginUser = async function (username, password) {
-      return await this.#makeRequest({
+   loginUser = function (username, password) {
+      return this.#makeRequest({
          method: 'POST',
          url: 'https://ams-iot-dev.azurewebsites.net/api/Auth/login',
          body: JSON.stringify({ username, password }),
@@ -17,7 +20,7 @@ class API {
    changePassword = async function (...details) {
       const [userId, currentPassword, newPassword, userToken] = details;
 
-      return await this.#makeRequest({
+      return this.#makeRequest({
          method: 'POST',
          url: 'https://ams-iot-dev.azurewebsites.net/api/Auth/ChangePassword',
          body: JSON.stringify({ userId, currentPassword, newPassword }),
@@ -29,10 +32,21 @@ class API {
    };
 
    resetPassword = async function (email) {
-      return await this.#makeRequest({
+      return this.#makeRequest({
          method: 'POST',
          url: `https://ams-iot-dev.azurewebsites.net/api/Auth/ResetPassword?emailId=${email}`,
          headers: { 'Content-Type': 'application/json' }
+      });
+   };
+
+   getLegalUser = async function (userId, userToken) {
+      return this.#makeRequest({
+         method: 'POST',
+         url: `https://ams-iot-dev.azurewebsites.net/api/Auth/getLegal?UserId=${userId}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`
+         }
       });
    };
 }

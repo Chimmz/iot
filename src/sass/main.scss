@@ -1,0 +1,32 @@
+@font-face {
+   font-family: 'Bronova';
+   src: url('bronova/BronovaBold.eot');
+   src: local('bronova/Bronova Bold'), local('bronova/BronovaBold'),
+      url('bronova/BronovaBold.eot?#iefix') format('embedded-opentype'),
+      url('bronova/BronovaBold.woff') format('woff'),
+      url('bronova/BronovaBold.ttf') format('truetype');
+   font-weight: bold;
+   font-style: normal;
+}
+
+@font-face {
+   font-family: 'Bronova';
+   src: url('bronova/BronovaRegular.eot');
+   src: local('bronova/BronovaRegular'), local('bronova/BronovaRegular'),
+      url('bronova/BronovaRegular.eot?#iefix') format('embedded-opentype'),
+      url('bronova/BronovaRegular.woff') format('woff'),
+      url('bronova/BronovaRegular.ttf') format('truetype');
+   font-weight: 400;
+   font-style: normal;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&display=swap');
+
+@import './variables';
+@import './base';
+@import './typography';
+@import './utils';
+@import './components/btn.scss';
+@import './components/form.scss';

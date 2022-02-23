@@ -23,3 +23,8 @@ export const selectUserAccepted = createSelector(
    [selectUser],
    user => user.currentUser.isAccepted
 );
+
+export const selectIsLoading = createSelector(
+   [selectUser],
+   user => user.isLoading
+);
