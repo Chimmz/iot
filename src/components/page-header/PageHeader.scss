@@ -1,0 +1,13 @@
+.page__content {
+   .page__header {
+      align-items: center !important;
+      border-bottom: 1px solid #e8ebed;
+      padding-bottom: 1.25rem;
+      gap: 5px;
+
+      & img {
+         width: 20px;
+         aspect-ratio: 1;
+      }
+   }
+}

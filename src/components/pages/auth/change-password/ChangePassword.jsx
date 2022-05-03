@@ -26,104 +26,112 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from '../../../UI/spinner/Spinner';
 import InputField from '../../../UI/InputField';
 
+// Input validator
+import * as inputValidators from '../../../../validators/inputValidator';
+
 import './ChangePassword.scss';
 
 function ChangePassword({ currentUser, userToken, userState, dispatch }) {
    const navigate = useNavigate();
 
-   const [
-      currentPassword,
-      onChangeCurrPass,
-      runCurrPassValidators,
-      currPassErrors,
-      setCurrPassErrors,
-      clearCurrPass
-   ] = useInput({
-      init: '',
-      validators: [{ isRequired: 'This field is required' }]
-      // Key names (Ex: 'isEmpty', 'isEmail') must match a function name in: /src/validators/inputValidator.js
-   });
-
-   const [
-      newPassword,
-      onChangeNewPass,
-      runNewPassValidators,
-      newPassErrors,
-      setNewPassErrors,
-      clearNewPass
-   ] = useInput({
+   const {
+      inputValue: currentPassword,
+      handleChange: onChangeCurrPass,
+      runValidators: runCurrPassValidators,
+      validationErrors: currPassErrors,
+      setValidationErrors: setCurrPassErrors,
+      pushError: pushCurrPasswordError
+   } = useInput({
       init: '',
       validators: [
-         { isRequired: 'This field is required' },
-         { minSixChars: 'Password is less than 6 characters' },
-         { isStrongPassword: 'Password is weak' }
+         {
+            isRequired: ['This field is required']
+            // Key name (Ex: 'isRequired', 'isEmail') must match a function name in /src/validators/inputValidator.js
+
+            // Array elements will be passed as args to the matching function in the order that they're stated here
+         }
       ]
    });
 
-   const [
-      confirmPassword,
-      onChangeConfirmPass,
-      runConfirmPassValidators,
-      confirmPassErrors,
-      setConfirmPassErrors,
-      clearConfirmPass
-   ] = useInput({
+   // prettier-ignore
+   const {
+      inputValue: newPassword,
+      handleChange: onChangeNewPass,
+      runValidators: runNewPassValidators,
+      validationErrors: newPassErrors,
+      setValidationErrors: setNewPassErrors
+   } = useInput({
       init: '',
-      validators: [{ isRequired: 'This field is required' }]
+      validators: [
+         { isRequired: ['This field is required'] },
+         { minLength: [8, 'Password is less than 8 characters'] },
+         { isNotSameAs: [currentPassword, 'New password should not be same as old password']},
+         { containsUpperCase: [] },
+         { containsDigit: [] },
+         { isStrongPassword: ['Password is weak. Choose a strong password'] },
+         { hasPasswordExceptions: ['Password must not contain %, -'] }
+         // Key name (Ex: 'isRequired', 'minLength', etc) must match function names in /src/validators/inputValidator.js
+         // Array elements will be passed as args to the matching function in the order that they're stated here
+      ]
    });
 
-   const runAllValidators = () => {
-      runCurrPassValidators();
-      runNewPassValidators();
-      runConfirmPassValidators();
-   };
+   const {
+      inputValue: confirmPassword,
+      handleChange: onChangeConfirmPass,
+      runValidators: runConfirmPassValidators,
+      validationErrors: confirmPassErrors,
+      setValidationErrors: setConfirmPassErrors
+   } = useInput({
+      init: '',
+      validators: [
+         { isRequired: ['This field is required'] },
+         { isSameAs: [newPassword, 'Passwords do not match'] }
+      ]
+   });
 
-   const clearAllValidators = () => {
+   const clearAllValidatorErrors = () => {
       setCurrPassErrors([]);
       setNewPassErrors([]);
       setConfirmPassErrors([]);
    };
 
-   const clearAllInputs = () => {
-      clearCurrPass();
-      clearNewPass();
-      clearConfirmPass();
-   };
-
    const handleSubmit = ev => {
       ev.preventDefault();
-      runAllValidators();
+      const errors = [
+         runCurrPassValidators(),
+         runNewPassValidators(),
+         runConfirmPassValidators()
+      ];
 
-      // prettier-ignore
-      if (currPassErrors.length || newPassErrors.length || confirmPassErrors.length)
-         return
-
-      if (newPassword !== confirmPassword) {
-         dispatch(
-            alertCreators.flashAlert(
-               new alertUtils.Alert('Passwords do not match', 'error')
-            )
-         );
-         return;
-      }
+      if (errors.flat().length)
+         // These 'set' actions show validation errors if any.
+         return [
+            setCurrPassErrors,
+            setNewPassErrors,
+            setConfirmPassErrors
+         ].forEach((set, i) => set(errors[i]));
 
       // Proceed to change password
+      const userDetails = {
+         userId: currentUser.userId,
+         currentPassword,
+         newPassword,
+         userToken
+      };
+
       dispatch(
          userCreators.changePassword(
-            navigate,
-            currentUser.userId,
-            currentPassword,
-            newPassword,
-            userToken
+            userDetails,
+            pushCurrPasswordError,
+            navigate
          )
       );
-      // clearAllInputs();
-      clearAllValidators();
+      clearAllValidatorErrors();
    };
 
    return (
       <>
-         <Spinner show-if={userState.isLoading}></Spinner>
+         <Spinner show={userState.isLoading}></Spinner>
          <main className='create__password__wrapp forgot__password auth__wrapper py-5 position-relative'>
             <Container>
                <div className='h3 fw-normal'>
@@ -150,6 +158,8 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
                               Type and confirm a secure new password for the
                               account.
                            </Form.Label>
+
+                           {/* InputField is a custom component (not a React-Bootstrap compon.) returning Form.Control & Form.Control.Feedback */}
                            <InputGroup className='mb-3 mb-lg-4'>
                               <InputGroup.Text id='password'>
                                  <img
@@ -167,6 +177,8 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
                                  validationErrors={currPassErrors}
                               />
                            </InputGroup>
+
+                           {/* InputField is a custom component (not a React-Bootstrap compon.) returning Form.Control & Form.Control.Feedback */}
                            <InputGroup className='mb-3 mb-lg-4'>
                               <InputGroup.Text id='password'>
                                  <img
@@ -184,6 +196,8 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
                                  validationErrors={newPassErrors}
                               />
                            </InputGroup>
+
+                           {/* InputField is a custom component returning Form.Control & Form.Control.Feedback */}
                            <InputGroup className='mb-3 mb-lg-4'>
                               <InputGroup.Text id='password2'>
                                  <img
@@ -220,10 +234,10 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
                      <p
                         className='fs12 mt-3 w-100 text-gray'
                         style={{ maxWidth: '360px' }}>
-                        <b>Plaese Note: </b> <br />
-                        The password should be at least 12 characters long. To
-                        make it stronger, user upper and ower case letters
-                        numbers, and symbols like ! \ “ ? $ % ^ &).
+                        <b>Please note: </b> <br />
+                        The password should be at least 8 characters long. To
+                        make it stronger, use upper and lower case letters
+                        numbers, and symbols like ! \ “ ? $ ^ &).
                      </p>
                   </Col>
                </Row>

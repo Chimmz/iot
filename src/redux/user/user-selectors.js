@@ -1,10 +1,17 @@
 import { createSelector } from 'reselect';
 
+// THIS FILE CREATES SELECTORS OF THE USER STATE IN THE REDUX STATE
+
 export const selectUser = state => state.user;
 
 export const selectCurrentUser = createSelector(
    [selectUser],
    user => user.currentUser
+);
+
+export const selectCurrentUserRoles = createSelector(
+   [selectCurrentUser],
+   currentUser => currentUser.roles
 );
 
 export const selectUserLoggedIn = createSelector(
@@ -21,10 +28,15 @@ export const selectUserStatusMsg = createSelector(
 
 export const selectUserAccepted = createSelector(
    [selectUser],
-   user => user.currentUser.isAccepted
+   user => user.isAccepted
 );
 
 export const selectIsLoading = createSelector(
    [selectUser],
    user => user.isLoading
+);
+
+export const selectUserPortfolio = createSelector(
+   [selectUser],
+   user => user.portfolio
 );

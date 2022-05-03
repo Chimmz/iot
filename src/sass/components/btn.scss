@@ -8,6 +8,8 @@
    color: var(--white);
    padding: 0.4rem 1.2rem 0.2rem 1.2rem;
    font-family: var(--body-font);
+   background-color: var(--brand);
+   border-color: #3db3e4;
 }
 
 .btn-light {
@@ -16,4 +18,30 @@
    background-color: var(--white);
    border-color: var(--white);
    font-family: var(--body-font);
+}
+.btn-primary:hover {
+   color: #000;
+   background-color: #47b7e6;
+   border-color: #3db3e4;
+}
+
+.btn-check:focus + .btn-primary, .btn-primary:focus{
+   background-color: var(--brand);
+   border-color: #3db3e4;
+}
+
+.btnCloseModal{
+   background-color: transparent;
+    border: none;
+    color: var(--brand)!important;
+    padding: 0;
+    margin-right: 5px;
+}
+.btnCloseModal:hover{
+   background-color: transparent;
+    border: none;
+    color: var(--brand)!important;
+    padding: 0;
+    margin-right: 5px;
+    text-decoration: underline;
 }

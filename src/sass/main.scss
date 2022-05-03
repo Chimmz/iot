@@ -1,21 +1,21 @@
 @font-face {
    font-family: 'Bronova';
-   src: url('bronova/BronovaBold.eot');
-   src: local('bronova/Bronova Bold'), local('bronova/BronovaBold'),
-      url('bronova/BronovaBold.eot?#iefix') format('embedded-opentype'),
-      url('bronova/BronovaBold.woff') format('woff'),
-      url('bronova/BronovaBold.ttf') format('truetype');
+   src: url('../bronova/BronovaBold.eot');
+   src: local('../bronova/Bronova Bold'), local('bronova/BronovaBold'),
+      url('../bronova/BronovaBold.eot?#iefix') format('embedded-opentype'),
+      url('../bronova/BronovaBold.woff') format('woff'),
+      url('../bronova/BronovaBold.ttf') format('truetype');
    font-weight: bold;
    font-style: normal;
 }
 
 @font-face {
    font-family: 'Bronova';
-   src: url('bronova/BronovaRegular.eot');
-   src: local('bronova/BronovaRegular'), local('bronova/BronovaRegular'),
-      url('bronova/BronovaRegular.eot?#iefix') format('embedded-opentype'),
-      url('bronova/BronovaRegular.woff') format('woff'),
-      url('bronova/BronovaRegular.ttf') format('truetype');
+   src: url('../bronova/BronovaRegular.eot');
+   src: local('../bronova/BronovaRegular'), local('bronova/BronovaRegular'),
+      url('../bronova/BronovaRegular.eot?#iefix') format('embedded-opentype'),
+      url('../bronova/BronovaRegular.woff') format('woff'),
+      url('../bronova/BronovaRegular.ttf') format('truetype');
    font-weight: 400;
    font-style: normal;
 }

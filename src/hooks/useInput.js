@@ -1,40 +1,29 @@
 import { useState, useEffect } from 'react';
 import * as inputValidators from '../validators/inputValidator';
+import useValidator from './useValidator';
 
 const useInput = function ({ init: initValue, validators }) {
    const [inputValue, setInputValue] = useState(initValue);
-   const [validationErrors, setValidationErrors] = useState([]);
+   const { runValidators, validationErrors, setValidationErrors, pushError } =
+      useValidator({ inputValue: inputValue.trim(), validators });
 
    const clearInput = () => setInputValue('');
-   const handleChange = ev => setInputValue(ev.target.value);
 
-   const runValidators = () => {
-      if (!validators?.length) return;
-
-      const getFeedback = validator => {
-         const [validatorName, errMsg] = Object.entries(validator).flat();
-         return inputValidators[validatorName]?.(inputValue, errMsg);
-      };
-
-      const isFeedbackError = feedback =>
-         feedback?.status === inputValidators.statusTypes.failed;
-
-      // For each validator, get a corresponding feedback and filter error-based feedbacks
-      const errors = validators.map(getFeedback).filter(isFeedbackError);
-      setValidationErrors(errors);
+   const handleChange = ev => {
+      setInputValue(ev.target.value);
+      setValidationErrors([]); // Clear validation errors when user continues to input
    };
 
-   // Also run validators upon input change event
-   useEffect(() => runValidators(), [inputValue]);
-
-   return [
+   return {
       inputValue,
       handleChange,
       runValidators,
       validationErrors,
       setValidationErrors,
+      pushError,
+      setInputValue,
       clearInput
-   ];
+   };
 };
 
 export default useInput;

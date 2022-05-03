@@ -4,10 +4,9 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 // Standard Redux imports
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import {
-   selectUserAccepted,
-   selectUserLoggedIn
-} from './redux/user/user-selectors';
+
+// Redux state selectors
+import * as userSelectors from './redux/user/user-selectors';
 
 // External components
 import Login from './components/pages/auth/login/Login';
@@ -15,30 +14,51 @@ import Alerts from './components/alert/Alerts';
 import Dashboard from './components/pages/dashboard/Dashboard';
 import PasswordReset from './components/pages/auth/password-reset/PasswordReset';
 import ChangePassword from './components/pages/auth/change-password/ChangePassword';
-import EmailSuccess from './components/pages/auth/password-reset/success/EmailSuccess';
 import ChangedPasswordSuccess from './components/pages/auth/change-password/success/ChangedPasswordSuccess';
 
+import TelemetryIncidentPage from './components/pages/incident-form/IncidentFormPage';
+
+// Contexts and context providers
+import { DashboardContextProvider } from './contexts/dashboardContext';
+import { IncidentFormContextProvider } from './contexts/incidentFormContext';
+import IncidentFormSuccess from './components/pages/incident-form/success/IncidentFormSuccess';
+import IncidentUpdate from './components/IncidentUpdate';
 import './App.scss';
 
-function App({ loggedIn, userAcceptedTermsAndCond }) {
+function App({ loggedIn }) {
    console.log('loggedIn: ', loggedIn);
-   console.log('userAccepted: ', userAcceptedTermsAndCond);
+
    return (
       <>
          <Alerts />
          <Routes>
-            <Route path='/login' element={<Login />} />
+            <Route path='login' element={<Login />} />
             <Route path='/' element={<Navigate replace to='/dashboard' />} />
 
             <Route
-               path='/dashboard'
+               path='/*'
                element={
-                  loggedIn ? <Dashboard /> : <Navigate replace to='/login' />
+                  <DashboardContextProvider>
+                     <Dashboard />
+                  </DashboardContextProvider>
                }
             />
 
             <Route
-               path='/change-password'
+               path='/telemetry/incident-form'
+               element={
+                  loggedIn ? (
+                     <IncidentFormContextProvider>
+                        <TelemetryIncidentPage />
+                     </IncidentFormContextProvider>
+                  ) : (
+                     <Navigate replace to='/login' />
+                  )
+               }
+            />
+
+            <Route
+               path='change-password'
                element={
                   loggedIn ? (
                      <ChangePassword />
@@ -48,26 +68,21 @@ function App({ loggedIn, userAcceptedTermsAndCond }) {
                }
             />
             <Route
-               path='/change-password/success'
-               element={
-                  loggedIn ? (
-                     <ChangedPasswordSuccess />
-                  ) : (
-                     <Navigate replace to='/login' />
-                  )
-               }
+               path='change-password/success'
+               element={<ChangedPasswordSuccess />}
             />
 
-            <Route path='/forgot-password' element={<PasswordReset />} />
-            <Route path='/email-success' element={<EmailSuccess />} />
+            <Route path='forgot-password' element={<PasswordReset />} />
+
+            <Route path='/success' element={<IncidentFormSuccess />} />
+            <Route path='/incident/update' element={<IncidentUpdate />} />
          </Routes>
       </>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
-   loggedIn: selectUserLoggedIn,
-   userAcceptedTermsAndCond: selectUserAccepted
+   loggedIn: userSelectors.selectUserLoggedIn
 });
 
 export default connect(mapStateToProps)(App);

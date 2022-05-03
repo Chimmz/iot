@@ -1,0 +1,58 @@
+.fade.modal-backdrop.show {
+    opacity: 0.5;
+    background: #E5E5E5;
+}
+
+#incidentRecordResponse{
+    font-family: Bronova!important;
+    font-family: var(--body-font)!important;
+
+    & .incident-form__topleft span{
+        font-size: 1.2em;
+    } 
+    & input[type="text"]:disabled{
+        background-color:white;
+        border: 1px solid darkgrey;
+    }
+    & .incidentSelectOption__forms input[type="text"]:disabled {
+        border: none;
+        border-bottom: 1px solid #E0E0E0;
+        width:50%;
+        color:#707070;
+    }
+    & .form-check-input[type=radio] + label{
+        color:#A9A9A9;
+        opacity:1;
+
+    }
+    & .form-check-input:checked[type=radio] + label{
+        color:#707070;
+    }
+    & #recordResponseImageList img{
+        max-width: 16em;
+        max-height: 20em;
+        margin: 0.2em;
+        border-radius: 0.25em;
+        // margin-right: 0.2em;
+        cursor: pointer;
+    }
+
+    & .incident-form__header{
+        width: 100%;
+        border-radius:0.25em 0.25em 0em 0em
+    }
+
+    & .modal-header{
+        border: none;
+    }
+
+    // & .modal-content{
+    //     border-radius: 0.75em;
+    // }
+
+    & .form-container{
+        overflow-y: scroll;
+        border-radius: 0.25em;
+    }   
+    
+}

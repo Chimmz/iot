@@ -22,6 +22,15 @@
 .mh-100 {
    min-height: 100vh;
 }
+.minh-100 {
+   min-height: 100%;
+}
+.w-min-content {
+   width: min-content !important;
+}
+.w-max-content {
+   width: max-content !important;
+}
 .z-index {
    z-index: 99;
 }
@@ -30,6 +39,9 @@
 }
 .text-dark {
    color: var(--text-color-dark) !important;
+}
+.text-white {
+   color: #fff !important;
 }
 .text-black {
    color: var(--light-dark);
@@ -43,3 +55,66 @@
 .text-gray {
    color: var(--gray);
 }
+.bg-none {
+   background: none !important;
+}
+.app-error {
+   color: #ff0000;
+   font-size: 0.875rem !important;
+}
+
+.mb-1 {
+   margin-bottom: 2rem;
+}
+.flex-grow {
+   flex: 1;
+}
+
+.align-self-center {
+   align-self: center !important;
+}
+
+.pos-relative {
+   position: relative !important;
+}
+.pos-absolute {
+   position: absolute !important;
+}
+.position-y-center {
+   position: absolute;
+   bottom: 50%;
+   transform: translateY(50%);
+}
+.margin-y-auto {
+   display: block;
+   margin-block: auto !important;
+}
+
+.body-font,
+.body-font * {
+   font-family: var(--body-font) !important;
+}
+.overflow-x-scroll {
+   overflow-x: scroll !important;
+}
+
+// .thin-scrollbar {
+//    &::-webkit-scrollbar {
+//       width: 5px;
+//    }
+
+//    /* Track */
+//    &::-webkit-scrollbar-track {
+//       background: #c5c5c5;
+//    }
+
+//    /* Handle */
+//    &::-webkit-scrollbar-thumb {
+//       background: #888;
+//    }
+
+//    /* Handle on hover */
+//    &::-webkit-scrollbar-thumb:hover {
+//       background: #555;
+//    }
+// }

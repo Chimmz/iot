@@ -5,23 +5,25 @@ import * as browserUtils from '../utils/browserUtils';
 
 import alertReducer from './alert/alert-reducer';
 import userReducer from './user/user-reducer';
-
-console.log(browserUtils.getCookieValue('_itek-remember'));
-
-const whitelist = ['user'];
-
-// const rememberMeCookieValue = browserUtils.getCookieValue('_itek-remember');
-// if (rememberMeCookieValue) whitelist.push('user');
+import portfolioReducer from './portfolio/portfolio-reducer';
+import incidentReducer from './incident/incident-reducer';
+import notificationReducer from './notification/notification-reducer';
+import iotDeviceReducer from './iot-devices/iotDevice-reducer';
 
 const persistConfig = {
    key: 'root',
    storage,
-   whitelist // Array of string names of reducers you want to persist
+   whitelist: ['user', 'portfolio'] // Array of string names of reducers you want to persist
 };
 
 const rootReducer = combineReducers({
    user: userReducer,
-   alert: alertReducer
+   alert: alertReducer,
+   portfolio: portfolioReducer,
+   incident: incidentReducer,
+   notification: notificationReducer,
+   iotDevice:iotDeviceReducer
+
 });
 
 export default persistReducer(persistConfig, rootReducer);

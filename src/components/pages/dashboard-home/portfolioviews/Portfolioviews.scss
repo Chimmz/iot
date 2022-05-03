@@ -1,0 +1,96 @@
+.device-overview-charts {
+    color: #464648;
+
+    & .card-footer {
+        background: transparent;
+        margin-top: 15px;
+    }
+
+    & .d-flex {
+        justify-content: space-between;
+        @media screen and (max-width: 439px) {
+            flex-direction: column;
+        }
+        @media screen and (max-width: 1487px) and (min-width: 992px) {
+            justify-content: center!important;
+        }
+        @media screen and (max-width: 991px) and (min-width: 865px) {
+            justify-content: space-between!important;
+        }
+        @media screen and (max-width: 768px) and (min-width: 439px) {
+            justify-content:  space-between!important;
+        }
+    }
+
+}
+
+.dashboard-card {
+    @media screen and (max-width: 768px){
+        margin-top: 15px;
+    }
+    & :not(:first-child){
+        @media screen and (min-width: 769px) and (max-width: 992px){
+            margin-top: 15px;
+        }
+    }
+    & .card-body {
+        padding: 0;
+    }
+
+    & .table-wrapper-scroll-y {
+        @media screen and (max-width: 1488px) and (min-width: 1200px){
+            height: 394px;
+        }
+        @media screen and (max-width: 1199px) and (min-width: 992px){
+            height: 418px;
+        }
+        @media screen and (max-width: 992px) and (min-width: 865px){
+            height: 245px;
+        }
+        @media screen and (max-width: 864px) and (min-width: 769px){
+            height: 394px;
+        }
+        position: relative;
+        height: 260px;
+        overflow: auto;
+        margin-right: 1px;
+    }
+
+    
+
+    table {
+        font-size: 12px;
+        color: #707070;
+        font-weight: 400;
+
+        thead {
+            position: sticky;
+            background: white;
+            top: 0;
+        }
+
+        tbody {
+            height: 230px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        &> :not(:first-child) {
+            border-top: none;
+        }
+
+        & .table-title {
+            color: #464648;
+            font-size: 12px;
+            border-top: 1.2px solid rgb(27, 27, 27);
+        }
+    }
+}
+
+.dash-widgets{
+    & div:nth-child(n+3){
+        @media screen and (min-width: 769px) and (max-width: 992px){
+            margin-top: 15px;
+        }
+    }
+}

@@ -20,6 +20,20 @@
    }
 }
 
+.form-check-input:checked {
+   background-color: #27AAE1;
+   border-color: #27AAE1;
+}
+
+.invalid-tooltip {
+   background-color: transparent;
+   color: red;
+   margin: 0;
+   left: 0;
+   border: none;
+   padding: 0;
+}
+
 .dropdown-menu {
    background: #ffffff;
    box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.15),

@@ -1,0 +1,110 @@
+.euka-datatables {
+   color: black;
+   display: flex;
+   flex-direction: column;
+   flex: 1;
+   font-size: 0.9rem;
+   font-weight: normal;
+
+   & .custom-content,
+   & .cell-content {
+      overflow: unset !important;
+   }
+
+   & .table-header,
+   & .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+   }
+
+   & .table-header {
+      gap: 10px;
+      margin-block: 10px;
+
+      & .table-title {
+         display: none;
+      }
+
+      // The records per page span element
+      &> :nth-child(2) {
+         display: flex;
+         align-items: center;
+         gap: 5px;
+      }
+   }
+
+   & .no-data-found {
+      flex: 1;
+      display: grid;
+      place-items: center;
+   }
+}
+
+.euka-datatables .table-filters {
+   & {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: wrap;
+      gap: 1rem;
+      float: unset !important;
+   }
+
+   &>span {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px;
+
+      & .table-search-input {
+         display: block !important;
+         align-self: center !important;
+         padding: 7px 15px !important;
+         border: 1px solid #dbdbdb;
+         margin-bottom: 0 !important;
+         outline: none;
+
+         &::-webkit-input-placeholder {
+            color: #c5c5c5;
+         }
+
+         &:focus {
+            border: 1px solid #a8a8a8;
+         }
+      }
+   }
+
+   & .date-filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: max-content;
+   }
+}
+
+.table-records-per-page-select {
+   padding: 8px;
+}
+
+.euka-datatables .selected-info {
+   display: none;
+}
+
+@media screen and (max-width: 480px) {
+   .euka-datatables .pagination {
+      &>button {
+         display: none;
+      }
+
+      .arrows,
+      .active,
+      .active+button {
+         display: block;
+      }
+
+      & .pagination-page-count {
+         display: none;
+      }
+
+   }
+}

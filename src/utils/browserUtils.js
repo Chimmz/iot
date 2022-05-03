@@ -6,14 +6,12 @@ export const createCookie = function (key, value, durationInDays) {
    document.cookie = `${key}=${value};expires=${expiry.toUTCString()}`;
 };
 
-export const getCookieValue = function (key) {
-   const cookiePairs = document.cookie.split(';').map(pair => pair.trim());
-   const rememberMe = cookiePairs.find(pair =>
-      pair.startsWith('_itek-remember')
-   );
+export const getCookie = function (key) {
+   const allCookies = document.cookie.split(';').map(pair => pair.trim());
+   const cookie = allCookies.find(pair => pair.startsWith(key));
 
-   if (!rememberMe) return null;
+   if (!cookie) return '';
 
-   const [_, value] = rememberMe.split('=');
-   return value === 'true';
+   const [_, value] = cookie.split('=');
+   return value;
 };

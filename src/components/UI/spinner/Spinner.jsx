@@ -3,12 +3,12 @@ import LoadingSpinner from 'react-bootstrap/Spinner';
 import './Spinner.scss';
 
 const Spinner = function (props) {
-   const { 'show-if': showIf, message = 'Loading. Please wait ...' } = props;
+   const { show, message = 'Loading. Please wait ...' } = props;
 
-   if (!showIf) return <></>;
+   if (!show) return <></>;
    return (
-      <div className='loading-spinner'>
-         <LoadingSpinner animation='grow' variant='primary'></LoadingSpinner>
+      <div className="loading-spinner">
+         <LoadingSpinner animation="grow" variant="primary"></LoadingSpinner>
          <h3>{message}</h3>
       </div>
    );

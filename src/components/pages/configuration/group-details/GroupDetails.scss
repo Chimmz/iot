@@ -1,0 +1,31 @@
+.group-details {
+   position: absolute !important;
+   bottom: 50%;
+   transform: translateY(50%);
+   right: 50%;
+
+   @media (max-width: 635px) {
+      right: unset;
+      // left: 0;
+      left: calc(100%);
+   }
+   @media (min-width: 769px) {
+      right: unset;
+      left: calc(100%);
+   }
+   @media (min-width: 876px) {
+      left: unset;
+      right: 50%;
+   }
+
+   &.card {
+      z-index: 10 !important;
+   }
+
+   &.fade {
+      visibility: hidden;
+   }
+   &.show {
+      visibility: visible;
+   }
+}

@@ -1,66 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import * as userCreators from '../../../redux/user/user-action-creators';
+
+// Redux state selectors and action creators
 import * as userSelectors from '../../../redux/user/user-selectors';
+import * as portfolioSelectors from '../../../redux/portfolio/portfolio-selectors';
 
-// Boostrap components
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+// Contexts
+import { dashboardContext } from '../../../contexts/dashboardContext';
 
-import API from '../../../utils/api';
+// Imports of Utils
+import API from '../../../utils/apiUtils';
 
-import Modal from '../../UI/Modal';
+// External custom  components
+import DashboardHeader from './header/DashboardHeader';
+import LeftSidebar from './left-sidebar/DashboardSidebar';
+import DashboardPages from './body/DashboardPages';
+import TermsAndConditions from '../../terms-and-conds/TermsAndConditions';
+
 import './Dashboard.scss';
-import * as asyncUtils from '../../../utils/asyncUtils';
+import Backdrop from '../../UI/backdrop/Backdrop';
 
 function Dashboard(props) {
-   const { currentUser, userStatusMsg, userToken, dispatch } = props;
-   const [termsModalShown, setTermsModalShown] = useState(
-      !currentUser.isAccepted
-   );
+   const { currentUser, userStatus, loggedIn, userToken } = props;
+   const [legalUser, setLegalUser] = useState(false);
+   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(true);
+   const { sidebarCollapsed, hideSidebar } = useContext(dashboardContext);
 
-   // const getLegalUser = async () => {
-   //    try {
-   //       const res = await asyncUtils.getResponseWithinTimeout(
-   //          API.getLegalUser(currentUser.userId, userToken)
-   //       );
-   //       if (res.legal === null) {
-   //       }
-   //       console.log(res);
-   //    } catch (err) {
-   //       console.log(err);
-   //    }
-   // };
+   const getLegalUser = async function () {
+      try {
+         let res = await API.getLegalUser(currentUser.userId, userToken);
+         console.log(res);
 
-   // useEffect(() => getLegalUser(), []);
+         const acceptedBefore = Boolean(res?.legal);
+         setHasAcceptedTerms(acceptedBefore);
 
-   const handleClickLogout = () => dispatch(userCreators.logout());
+         if (!acceptedBefore) res = await API.getLegalUser(0, userToken);
+         setLegalUser(res?.legal);
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
-   if (userStatusMsg === 'DEFAULT_PASSWORD')
-      return <Navigate to='/change-password' />;
+   useEffect(() => {
+      document.title = 'AMS Portal';
+      getLegalUser();
+   }, []);
 
-   return (
+   return !loggedIn ? (
+      <Navigate to='/login' />
+   ) : userStatus === 'DEFAULT_PASSWORD' ? (
+      <Navigate to='/change-password' />
+   ) : (
       <>
-         {/* <Modal show-if={termsModalShown} /> */}
-         <h1>
-            Hi {currentUser.firstName} {currentUser.lastName}
-         </h1>
-         <button onClick={handleClickLogout}>Logout</button>
+         <DashboardHeader />
+         <main className={`main__layout ${sidebarCollapsed && 'compact'}`}>
+            <LeftSidebar />
+            <DashboardPages />
+         </main>
+         {!hasAcceptedTerms && <TermsAndConditions legalUser={legalUser} />}
+
+         <Backdrop
+            show={sidebarCollapsed}
+            classes='sidebar-mobile'
+            onClick={hideSidebar}
+         />
       </>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
    currentUser: userSelectors.selectCurrentUser,
-   userStatusMsg: userSelectors.selectUserStatusMsg,
-   userToken: userSelectors.selectUserToken
+   loggedIn: userSelectors.selectUserLoggedIn,
+   userStatus: userSelectors.selectUserStatusMsg,
+   userToken: userSelectors.selectUserToken,
+   currentPortfolio: portfolioSelectors.selectCurrentPortfolio
 });
 
 export default connect(mapStateToProps)(Dashboard);
