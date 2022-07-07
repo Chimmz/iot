@@ -98,6 +98,14 @@
    overflow-x: scroll !important;
 }
 
+.input-group-text{
+   padding-right: 3px;
+}
+
+.form-control{
+   padding: 0.375rem 0.5rem;
+}
+
 // .thin-scrollbar {
 //    &::-webkit-scrollbar {
 //       width: 5px;

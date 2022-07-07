@@ -1,0 +1,141 @@
+.modal-fullscreen{
+    & .modal-dialog {
+     max-width: 100%;
+     margin: 0;
+     padding: 0;
+   }
+   .modal-content {
+    // height: 100vh !important;
+    max-width: 100%;
+    //  height: 100%;
+     border-radius: 0;
+  }
+ }
+
+
+ #accountSettingsModal{
+    height: min-content !important;
+    
+     
+    color:#464648;
+    font-family: var(--body-font);
+    background-color: #fefefe;
+
+    hr { 
+        width: 75%
+    }
+    
+
+    a:hover{
+        cursor: pointer;
+    }
+
+    .greeting {
+        color:#A9A9A9;
+        font-size: 1.4em;
+    }
+    .greeting span{
+        color:#27AAE1;
+    }
+    h2{
+        color:#27AAE1;
+        font-weight: 700;
+    }
+    .row{
+        align-items: center;
+    }
+
+    .user-card{
+        h2{
+            color:#464648;
+            font-weight: 400;
+        }
+    }
+    .account-settings-wrapper {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        // grid-auto-rows: 100px;
+        align-items: start;
+        // min-height: calc(50vh)
+    }
+    .card-title {
+        font-size: 1.2em;
+        font-weight: 400;
+        color: #A9A9A9;
+    }
+    .card-body-header{
+        font-size: 1.75em;
+        color: #27AAE1;
+        font-weight: 500;
+    }
+    .card-icon{
+        width:20px;
+        height:20px;
+        
+    }
+}
+
+@media screen and (max-width:480px) {
+    .modal-body{
+        background: none !important;
+    }
+}
+@media screen and (max-width:560px) {
+    .account-settings-wrapper {
+        .box1{
+            grid-column: 1/4;
+            grid-row: 1;
+        }
+        .box2{
+            grid-column: 1/4;
+            grid-row: 5;
+        }
+        .box3{
+            grid-column: 2/4;
+            grid-row: 4;
+            margin-bottom: 2.5rem !important;
+        }
+        
+    }
+    #accountSettingsModal, #changePasswordModal{
+        .mt-7{
+            margin-top: 2rem !important;
+        }
+        .forgot__password {
+            padding-top: 1em !important;
+        }
+        .copyright {
+            padding-top: 0% !important;
+            .line-1{    
+                width: 100%;
+            }
+        }
+        .auth__wrapper{
+            margin: auto !important;
+        }
+    } 
+  
+    
+}
+.mt-7{
+    margin-top: 4rem !important;
+}
+
+@media (max-width: 992px){
+#accountSettingsModal .copy__right {
+    width: calc(100% + 2rem);
+    margin-left: -1rem;
+}
+}
+#accountSettingsModal .copy__right {
+    text-align: center;
+    color: #607080;
+    background: #ffffff;
+    // box-shadow: 0px -1px 1px rgb(0 0 0 / 25%);
+    padding: 1rem;
+    margin-top: 3rem;
+    // width: calc(100% + 3rem);
+    margin-left: -1.5rem;
+    margin-top: auto;
+    font-size: 0.8rem;
+  }

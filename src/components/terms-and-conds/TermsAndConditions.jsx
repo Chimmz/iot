@@ -6,14 +6,11 @@ import * as userSelectors from '../../redux/user/user-selectors';
 
 // Hooks
 import useToggle from '../../hooks/useToggle';
-
 // Utils
 import API from '../../utils/apiUtils';
-
 // External components
 import { Button } from 'react-bootstrap';
 import Dialog from '../UI/dialog/Dialog';
-
 import './TermsAndConditions.scss';
 
 function TermsAndConditions(props) {
@@ -24,25 +21,26 @@ function TermsAndConditions(props) {
    const [userAgreed, toggleUserAgreed] = useToggle(
       checkboxRef.current?.checked
    );
+   const hide = () => setShowModal(false);
 
    const handleContinue = () => {
       if (!userAgreed) return;
 
       API.acceptTermsAndConditions(currentUser.userId, userToken)
-         .then(res => setShowModal(false))
-         .catch(err => setShowModal(false));
+         .then(hide)
+         .catch(hide);
    };
 
    if (!showModal) return <></>;
 
    return (
-      <Dialog>
+      <Dialog blurBackdrop>
          <Dialog.Header canClose={false}>
             <h3>Terms & Conditions</h3>
          </Dialog.Header>
 
          <Dialog.Body>
-            <p>{legalUser?.description || ''}</p>
+            <p className='description'>{legalUser?.description || ''}</p>
             <p>{legalUser?.extendedDescription || ''}</p>
          </Dialog.Body>
 

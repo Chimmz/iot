@@ -17,9 +17,10 @@ export function GetRecordResponseField (record){
         case 'radio':{
             let defaultVal = record.defaultValue;
             defaultVal = typeof(defaultVal)==='string' ? defaultVal.split(',') : defaultVal;
+            
             let selectedValFoundInRadio = false;
             Object.keys(defaultVal).map((k,v)=>{
-                if(record.value===defaultVal[k])
+                if(record.value.trim()===defaultVal[k].trim())
                     selectedValFoundInRadio=true;
                 return ()=>{};
             })
@@ -32,7 +33,7 @@ export function GetRecordResponseField (record){
                         type='radio'
                         label={defaultVal[k]}
                         id={`disabled-default-${defaultVal[k]}`}
-                        checked={record.value===defaultVal[k] || (!selectedValFoundInRadio && defaultVal[k]===record.openExtFieldIf)}
+                        checked={record.value.trim()===defaultVal[k].trim() || (!selectedValFoundInRadio && defaultVal[k].trim()===record.openExtFieldIf.trim())}
                         
 
                     /> 

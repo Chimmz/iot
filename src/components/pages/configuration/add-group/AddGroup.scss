@@ -8,9 +8,18 @@
    left: 50%;
    transform: translate(-50%, -50%);
    background: #fff;
-   padding: min(8vw, 50px);
+   padding: 20px 50px;
    border-radius: 5px;
    z-index: 31 !important;
+
+   & form {
+      margin-right: 80px;
+
+      & label {
+         text-align: right;
+         padding-right: 20px;
+      }
+   }
 
    @media screen and (min-width: 980px) {
       width: 800px;
@@ -34,21 +43,36 @@
       visibility: hidden;
    }
 
+   & button.btn-primary {
+      margin-right: 38px;
+   }
+
    & button.btn-primary,
    & button.btn-outline-dark {
       width: 144px;
       height: 48px;
       justify-content: center;
+      border-radius: 8px !important;
+      font-size: 24px;
+      padding: 0;
 
-      @media screen and (max-width: 480px) {
-         width: 120px;
-         height: 40px;
+      @media screen and (max-width: 767px) {
+         width: 92px;
+         height: 36px;
+         font-size: 1rem;
+         font-weight: 400;
+         margin-right: 25px;
       }
    }
 
    & button.btn-outline-dark {
       border: 1px solid #a9a9a9;
       color: #a9a9a9;
+
+      &:hover {
+         background: #0073E5;
+         color: #fff;
+      }
    }
 
    & .actions {
@@ -56,6 +80,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 20px;
    }
 
    &::before {
@@ -64,10 +89,9 @@
       top: 0;
       right: 0;
       display: block;
-      width: 110px;
-      height: 110px;
-      background: url(../../../../../public/images/icons/addgrouppage-icon.png)
-         center center no-repeat;
+      width: 85px;
+      height: 85px;
+      background: url(../../../../../public/images/icons/addgrouppage-icon.png) center center no-repeat;
       background-size: cover;
       z-index: 10;
 
@@ -92,7 +116,7 @@
       gap: 1.5rem;
       padding-block: 10px;
 
-      & [type='checkbox']:checked + label {
+      & [type='checkbox']:checked+label {
          color: #000;
       }
 
@@ -108,5 +132,58 @@
    & label {
       font-size: 14px;
       color: #a9a9a9;
+   }
+
+   & .user-info label {
+      text-align: left;
+   }
+}
+
+.group-config .addGroup-topbtn {
+   height: 36px;
+   width: 182px;
+   border-radius: 4px;
+   font-size: 14px;
+   font-weight: 400;
+   line-height: 15px;
+   letter-spacing: 0em;
+   padding: 0 15px;
+}
+
+@media screen and (max-width: 580px) {
+   .group-config .addGroup-topbtn {
+      position: absolute;
+      top: 116px;
+   }
+
+   .group-config .euka-datatables .table-header {
+      padding-bottom: 40px;
+   }
+}
+
+@media screen and (max-width: 767px){
+   .add-group{
+      padding: 40px 16px;
+
+      & form.w-md-75{
+         width: 100%;
+         margin: 0;
+
+         & label{
+            text-align: left;
+            padding: 5px 0;
+         }
+
+         & div.col-sm-4, & div.col-sm-8{
+            padding-left: 0;
+         }
+
+         & div.input-group{
+            margin-bottom: 16px!important;
+            padding: 0;
+            margin: 0;
+         }
+
+      }
    }
 }

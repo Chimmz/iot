@@ -22,17 +22,15 @@ export async function fetchWithinTimeout(request, durationSecs) {
    return response;
 }
 
-export const handleFetchLoadingState = async function (...params) {
-   const [fn, { startLoading, stopLoading }] = params;
-
-   startLoading(); // Do sth upon start fetching (like show a loading spinner)
+export function handleFetchLoadingState(fn, options) {
+   options?.startLoading?.(); // Do sth upon start fetching (like show a loading spinner)
    return fn()
       .then(res => {
-         stopLoading(); // Do sth upon response (like hide a loading spinner)
+         options?.stopLoading?.(); // Do sth upon response (like hide a loading spinner)
          return res;
       })
       .catch(err => {
-         stopLoading(); // Do sth upon fetch error (like hide a loading spinner)
+         options?.stopLoading?.(); // Do sth upon fetch error (like hide a loading spinner)
          throw err;
       });
-};
+}

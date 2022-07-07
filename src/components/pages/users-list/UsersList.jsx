@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-
 import * as userSelectors from '../../../redux/user/user-selectors';
 import * as portfolioSelectors from '../../../redux/portfolio/portfolio-selectors';
 
@@ -11,96 +10,114 @@ import useFetch from '../../../hooks/useFetch';
 import { useUsersListContext } from '../../../contexts/usersListContext';
 
 import API from '../../../utils/apiUtils';
-import { tableColumns } from './table-config';
+
+import { getTableColumns, getTableData } from './table-config';
 
 import IotTable from '../../iot-table/IotTable';
-import UserActions from './actions-on-user/UserActions';
-import PageHeader from '../../page-header/PageHeader';
 import Spinner from '../../UI/spinner/Spinner';
-import Toggler from '../../UI/toggler/Toggler';
-import ToggleUser from './toggle-user/ToggleUser';
 import AddNewUser from './add-new-user/AddNewUser';
 
-function UsersList({ currentPortfolio, userToken }) {
+function UsersList(props) {
+   const { currentUser, currentPortfolio, userToken } = props;
    const [users, setUsers] = useState([]);
    const [usersInPortfolio, setUsersInPortfolio] = useState([]);
    const { sendRequest: sendManyRequests, loading: manyRequestsLoading } =
       useFetch();
-
-   // To track when the user list gets updated by either adding/deleting/updating a user
+   // To track when the users list gets updated by adding/deleting/updating a user
    const { wasUpdated, setWasUpdated } = useUsersListContext();
+   const btnAddUserRef = useRef();
 
-   const getTableData = function () {
-      if (!users.length) return [];
-
-      return users.map(u => ({
-         userName: u.firstName + ' ' + u.lastName,
-         propertyName: u.portfolioName,
-         phone: u.contactNumber,
-         group: u.roles?.find(role => role.roleType == 'VIEW')?.name,
-         primaryEmail: u.emailId,
-         action: (
-            <UserActions
-               user={u}
-               usersInPortfolio={usersInPortfolio}
-               userToken={userToken}
-            />
+   const loadUsers = useCallback(() => {
+      // If page reloads and currentPortfolio is not yet set by Redux
+      if (!currentPortfolio) return;
+      const reqs = [
+         API.getUsersList(userToken),
+         API.getAllUsersInPortfolio(
+            currentPortfolio.portfolioHeaderId,
+            userToken
          ),
-         active: <ToggleUser user={u} userToken={userToken} />
-      }));
-   };
-
-   const loadUsers = async function () {
-      try {
-         const responses = await sendManyRequests(
-            Promise.all([
-               API.getUsersList(userToken),
-               API.getAllUsersInPortfolio(
-                  currentPortfolio.portfolioHeaderId,
-                  userToken
-               )
-            ])
-         );
+      ];
+      const requests = sendManyRequests(Promise.all(reqs));
+      requests.then(responses => {
+         // console.log(responses)
          [setUsers, setUsersInPortfolio].forEach((set, i) => set(responses[i]));
-      } catch (err) {
-         console.log(err);
-      }
-   };
+         setWasUpdated(false);
+      });
+      requests.catch(console.log);
+   }, [currentPortfolio]);
+
+   // useEffect(() => {
+   //    const btnAddUser = document.querySelector('.btnAddUser');
+   //    btnAddUser.remove();
+   //    // console.log(btnAddUser);
+   //    // btnAddUser.classList.add('d-none');
+   //    // document
+   //    //    .querySelector('.euka-datatables .table-header')
+   //    //    .appendChild(btnAddUser);
+   //    // .insertAdjacentHTML('beforeend', btnAddUser);
+   // }, [usersInPortfolio.length, currentPortfolio, wasUpdated]);
 
    useEffect(() => {
       loadUsers();
-   }, []);
+   }, [loadUsers, currentPortfolio]);
 
    useEffect(() => {
       if (wasUpdated) loadUsers(); // If the user list was updated
-      setWasUpdated(false);
-   }, [wasUpdated]);
+   }, [wasUpdated, setWasUpdated, loadUsers]);
 
+   if (manyRequestsLoading)
+      return <Spinner show messsage="Getting records..." />;
    return (
       <>
-         <PageHeader location={useLocation()} />
          <Routes>
-            <Route path='new-user' element={<AddNewUser />} />
+            <Route path="new-user" element={<AddNewUser />} />
          </Routes>
-         <div className='card px-3 py-5 flex-grow data-card telemetry'>
-            <div className='d-flex justify-content-space-between'>
-               <h2 className='page-heading fw-600 mb-lg flex-grow'>
+         <div className="card px-3 py-5 flex-grow data-card">
+            <div
+               className="d-flex align-items-center justify-content-space-between flex-wrap"
+               style={{ columnGap: '15px' }}
+            >
+               <h2
+                  className="page-heading fw-600 mb-lg flex-grow"
+                  style={{ minWidth: 'max-content' }}
+               >
                   Users List
                </h2>
-               <Link to='new-user' className='btn btn-primary ' type='submit'>
-                  Add new user
+
+            </div>
+            <div className="userList-table">
+               <IotTable
+                  columns={getTableColumns.call({ setUsersInPortfolio })}
+                  data={getTableData({ props, usersInPortfolio })}
+               // extraTableHeaderElements={[
+               //    <div ref={btnAddUserRef}>
+               //       <Link
+               //          to="new-user"
+               //          className="btn btn-primary "
+               //          type="submit"
+               //       >
+               //          Add new user
+               //       </Link>
+               //    </div>,
+               // ]}
+               />
+               <Link
+                  to="new-user"
+                  className="btn btn-primary btnAddUser"
+                  type="submit"
+               >
+                  Add New User
                </Link>
             </div>
-            <IotTable columns={tableColumns} data={getTableData()} />
          </div>
-         <Spinner show={manyRequestsLoading} msg='Getting records...' />
       </>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
+   currentUser: userSelectors.selectCurrentUser,
+   currentPortfolio: portfolioSelectors.selectCurrentPortfolio,
    userToken: userSelectors.selectUserToken,
-   currentPortfolio: portfolioSelectors.selectCurrentPortfolio
 });
 
 export default connect(mapStateToProps)(UsersList);

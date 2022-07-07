@@ -1,14 +1,24 @@
 .loading-spinner {
    position: fixed;
    inset: 0;
-   z-index: 100000;
-   background: rgba(0, 0, 0, 0.8);
+   z-index: 1000;
+   background: rgba(#fff, 0.75);
    display: flex;
-   flex-direction: column;
    align-items: center;
    justify-content: center;
    gap: 2rem;
    height: 100%;
-   color: #fff;
-   transition: background-color 1s;
+   color: #000;
+   font-size: 1.2rem !important;
+   transition: background-color 2s;
+
+   & h6 {
+      transform: translateY(30%);
+      font-weight: bold;
+   }
+
+   & .spinner-border {
+      vertical-align: 0 !important;
+      color: var(--brand);
+   }
 }

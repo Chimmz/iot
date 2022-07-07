@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 // date-fns module used for the subtracting the days
@@ -10,120 +10,87 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import { Calendar4Week } from 'react-bootstrap-icons';
 
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import * as portfolioSelectors from '../../../redux/portfolio/portfolio-selectors';
+import * as userSelectors from '../../../redux/user/user-selectors';
+
 import PageHeader from '../../page-header/PageHeader';
+
+import GetActiveIncidents from './portfolioviews/overview/ActiveIncidentsAPI';
 
 // This are the portfolio pages which we will use for the dashboard each card category
 // import DeviceList from '../../../../../graphs/userMaintanance'
-import TrendingView from './portfolioviews/TrendingBox';
-import DeviceGraph from './portfolioviews/DeviceView';
-import IncVsLogView from './portfolioviews/IncidentVsLoggedView';
-import WaterFloodView from './portfolioviews/WaterFloodCardview';
-import WaterLeakView from './portfolioviews/WaterLeakCardView';
-import ShutoffValue from './portfolioviews/ShutoffValueCardView';
+import DeviceGraph from './portfolioviews/overview/DeviceView';
+import SuppressedDevice from './portfolioviews/overview/suppressDeviceView';
+import WaterFloodView from './portfolioviews/overview/WaterFloodCardview';
+import WaterLeakView from './portfolioviews/overview/WaterLeakCardView';
+import ShutoffValue from './portfolioviews/overview/ShutoffValueCardView';
 
-function DashboardHome() {
+function DashboardHome(props) {
    const Location = useLocation();
-   // Added the default count as 30 days to showing on UI
-   const DefaultSubDays = 30;
-   const Dashboard = 2;
-   // create a State hooks for storing the date updating the latest date coming from the UI
-   const [UpdateDate, setUpdateDate] = useState({
-      startDate: subDays(new Date(), DefaultSubDays),
-      endDate: new Date()
-   });
-   const RangeValidation = props => {
-      const { start, end } = props;
-      console.log(start, end);
-      if (end > addDays(new Date(), 1)) {
-         window.alert('date range should not be greater');
-      } else {
-         setUpdateDate({ startDate: start, endDate: end });
-      }
-   };
-   // this function is for displaying the calendar in the dashbard page
-   const CreateCalendar = () => {
-      // This is for the callback default function for the DateRangePicker
-      const handleCallback = (start, end, label) => {
-         //start._d and end._d is the key for getting the selected date.
-         RangeValidation({ start: start._d, end: end._d });
-      };
-      return (
-         <>
-            <DateRangePicker
-               initialSettings={UpdateDate}
-               onCallback={handleCallback}>
-               <input />
-            </DateRangePicker>
-         </>
-      );
-   };
 
-   if (Dashboard === 1) {
+   // This is to call the active incidents API 
+   var incidents = GetActiveIncidents(props)
+
+   // Get the roles from the redux store and check the device state
+   // Filter the role based on view and render whether manager, maintenence or portfolio
+   const GetViewRole = props.roles.filter(item => item.roleType === "VIEW")
+   let dashboard = GetViewRole?.[0]["code"];
+   if (dashboard === "MAINTENANCE") {
       return (
          <>
-            <div className='row g-4 border-bottom'>
+            <div className="row g-4">
                <div className='d-flex justify-content-between'>
                   <PageHeader location={Location} />
-                  {/* <CreateCalendar>
-                     <input style={{ width: '100%' }} />
-                  </CreateCalendar> */}
-                  {/* <DateRangePicker>
-                     <button type="button" className="btn btn-light h3 px-4">
-                        Today <Calendar4Week className='ms-3' />
-                     </button>
-                  </DateRangePicker> */}
-
                </div>
             </div>
-
-            <div className='row g-4'>
-               <div className='col'>
-                  <div className='row'>
-                     <div className='col-md-3'>
-                        <DeviceGraph />
-                        <br />
-                     </div>
-                     <div className='col-md-3'>
-                        <ShutoffValue />
-                     </div>
-                     <div className='col-md-3'>
-                        <WaterFloodView />
-                     </div>
-                     <div className='col-md-3'>
-                        <WaterLeakView />
-                     </div>
-                  </div>
+            <div className='row dash-widgets g-4'>
+               <div className='col-md-5'>
+                  <DeviceGraph />
+               </div>
+               <div className='col-md-5'>
+                  <SuppressedDevice />
+               </div>
+            </div>
+            <div className='row dash-widgets g-4'>
+               <div className='col-md-4'>
+                  <WaterFloodView incidents={incidents} />
+               </div>
+               <div className='col-md-4'>
+                  <WaterLeakView incidents={incidents} />
+               </div>
+               <div className='col-md-4'>
+                  <ShutoffValue incidents={incidents} />
                </div>
             </div>
          </>
       );
-   } else if (Dashboard === 2) {
+   } else if (dashboard === "MANAGER") {
       return (
          <>
-            <div className="row g-4 border-bottom">
+            <div className="row g-4">
                <div className='d-flex justify-content-between'>
                   <PageHeader location={Location} />
-                  {/* <CreateCalendar>
-                     <input className='form-control form-control-lg' />
-                  </CreateCalendar> */}
                </div>
             </div>
-            <div className='row g-4'>
-               <div className='col'>
-                  <div className='row dash-widgets'>
-                     <div className='col-md-6 col-lg-3'>
-                        <DeviceGraph />
-                     </div>
-                     <div className='col-md-6 col-lg-3'>
-                        <ShutoffValue />
-                     </div>
-                     <div className='col-md-6 col-lg-3'>
-                        <WaterFloodView />
-                     </div>
-                     <div className='col-md-6 col-lg-3'>
-                        <WaterLeakView />
-                     </div>
-                  </div>
+            <div className='row dash-widgets g-4'>
+               <div className='col-md-5'>
+                  <DeviceGraph />
+               </div>
+               <div className='col-md-5'>
+                  <SuppressedDevice />
+               </div>
+            </div>
+            <div className='row dash-widgets g-4'>
+               <div className='col-md-4'>
+                  <WaterFloodView incidents={incidents} />
+               </div>
+               <div className='col-md-4'>
+                  <WaterLeakView incidents={incidents} />
+               </div>
+               <div className='col-md-4'>
+                  <ShutoffValue incidents={incidents} />
                </div>
             </div>
          </>
@@ -131,4 +98,11 @@ function DashboardHome() {
    }
 }
 
-export default DashboardHome;
+const mapStateToProps = createStructuredSelector({
+   currentPortfolio: portfolioSelectors.selectCurrentPortfolio,
+   userToken: userSelectors.selectUserToken,
+   roles: userSelectors.userRoles
+
+});
+
+export default connect(mapStateToProps)(DashboardHome);

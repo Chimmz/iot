@@ -7,15 +7,14 @@ import {
 function useFetch() {
    const [loading, setLoading] = useState(false);
 
-   const sendRequest = function (promiseFunc) {
-      const startLoading = () => setLoading(true);
-      const stopLoading = () => setLoading(false);
-      const makeRequest = () => fetchWithinTimeout(promiseFunc);
+   const sendRequest = function (req) {
+      const makeRequest = () => fetchWithinTimeout(req);
 
-      return handleFetchLoadingState(makeRequest, {
-         startLoading,
-         stopLoading
-      });
+      const loadingConfig = {
+         startLoading: () => setLoading(true),
+         stopLoading: () => setLoading(false)
+      };
+      return handleFetchLoadingState(makeRequest, loadingConfig);
    };
 
    return { sendRequest, loading };

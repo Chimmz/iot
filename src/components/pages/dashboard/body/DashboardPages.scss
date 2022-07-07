@@ -4,7 +4,8 @@
       padding: 1.5rem;
       padding-bottom: 0;
       gap: 1.5rem;
-      max-height: calc(100vh - 62px - 2px);
+      height: 100vh;
+      // max-height: calc(100vh - 62px - 2px);
       overflow-y: scroll;
       overflow-x: hidden;
       display: flex;
@@ -32,6 +33,7 @@
          margin-left: -1.5rem;
          margin-top: auto;
          font-size: 0.8rem;
+         margin-bottom: 60px;
       }
    }
 }

@@ -15,9 +15,9 @@ import { dashboardContext } from '../../../contexts/dashboardContext';
 import API from '../../../utils/apiUtils';
 
 // External custom  components
-import DashboardHeader from './header/DashboardHeader';
-import LeftSidebar from './left-sidebar/DashboardSidebar';
+import LeftSidebar from '../../layout/left-sidebar/LeftSidebar';
 import DashboardPages from './body/DashboardPages';
+import Header from '../../layout/header/Header';
 import TermsAndConditions from '../../terms-and-conds/TermsAndConditions';
 
 import './Dashboard.scss';
@@ -50,12 +50,12 @@ function Dashboard(props) {
    }, []);
 
    return !loggedIn ? (
-      <Navigate to='/login' />
+      <Navigate to="/login" />
    ) : userStatus === 'DEFAULT_PASSWORD' ? (
-      <Navigate to='/change-password' />
+      <Navigate to="/change-password" />
    ) : (
       <>
-         <DashboardHeader />
+         <Header />
          <main className={`main__layout ${sidebarCollapsed && 'compact'}`}>
             <LeftSidebar />
             <DashboardPages />
@@ -64,7 +64,7 @@ function Dashboard(props) {
 
          <Backdrop
             show={sidebarCollapsed}
-            classes='sidebar-mobile'
+            classes="sidebar-mobile"
             onClick={hideSidebar}
          />
       </>

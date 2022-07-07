@@ -1,5 +1,5 @@
 .euka-datatables {
-   color: black;
+   color: #4f5c69;
    display: flex;
    flex-direction: column;
    flex: 1;
@@ -22,6 +22,8 @@
    & .table-header {
       gap: 10px;
       margin-block: 10px;
+      margin-bottom: 25px !important;
+      font-size: 14px !important;
 
       & .table-title {
          display: none;
@@ -31,7 +33,6 @@
       &> :nth-child(2) {
          display: flex;
          align-items: center;
-         gap: 5px;
       }
    }
 
@@ -63,13 +64,16 @@
          border: 1px solid #dbdbdb;
          margin-bottom: 0 !important;
          outline: none;
+         height:36px;
+         width:128px;
 
          &::-webkit-input-placeholder {
             color: #c5c5c5;
          }
 
          &:focus {
-            border: 1px solid #a8a8a8;
+            border: 1px solid #27aae1;
+            box-shadow: 0px 0px 0px 4px rgba(82, 157, 232, 0.1);
          }
       }
    }
@@ -79,15 +83,203 @@
       align-items: center;
       gap: 10px;
       min-width: max-content;
+      color: #464648 !important;
+
+      // This is for to highlight the boroder and shadow for the dropdown date filter.
+      & .show {
+         #segmented-button-dropdown-1 {
+            &:focus {
+               border: 1px solid #27aae1;
+               box-shadow: 0px 0px 0px 4px rgba(82, 157, 232, 0.1) !important;
+               // border-radius: 8px;
+            }
+         }
+      }
    }
+
+   & .dropdown {
+      background-color: #f3f5f6 !important;
+
+      &-menu {
+         padding: 16px 4px 16px 4px !important;
+         font-size: 13px;
+         box-shadow: 0px -4px 16px rgba(0, 0, 0, 0.1),
+            0px 4px 16px rgba(0, 0, 0, 0.1);
+         border-radius: 8px;
+         text-transform: capitalize;
+      }
+
+      #segmented-button-dropdown-1 {
+         color: #4f5c69;
+         padding: 7px 12px 7px 16px;
+         border-color: #d8d8d8;
+         border-radius: 5px;
+         text-transform: capitalize;
+         background-color: white;
+
+         &:hover {
+            // color: #dbdbdb;
+            background-color: #f3f5f6 !important;
+         }
+      }
+
+      .dropdown-item {
+         color: #464648 !important;
+
+         &:hover {
+            background: #27aae1 !important;
+            color: #fff !important;
+            border-radius: 4px !important;
+         }
+
+         &:active {
+            background-color: white !important;
+         }
+      }
+
+      .active {
+         //background: #27aae1 !important;
+         //color: white !important;
+         border-radius: 4px;
+      }
+   }
+}
+
+// This is for providing space between the date dropdown word and down arrow.
+.dropdown-toggle::after {
+   margin-left: 8px !important;
 }
 
 .table-records-per-page-select {
    padding: 8px;
+   font-size: 14px;
+   margin: 0 0.5rem 0 0.5rem !important;
+   border-color: #dbdbdb;
+
+   &:hover {
+      cursor: pointer;
+      background-color: #f3f5f6;
+   }
+
+   &:focus {
+      border: 1px solid #27aae1;
+      box-shadow: 0px 0px 0px 4px rgba(82, 157, 232, 0.1);
+      // @include input-focused-shadow;
+   }
 }
 
 .euka-datatables .selected-info {
    display: none;
+}
+
+// Euka table customaization
+.euka-datatables .datatable-wrapper {
+
+   // This is for the table first row thead
+   tr th {
+      border-top-width: 1px;
+      border-bottom-width: 1px;
+      border-color: #dadbdd;
+      background-color: #f0f0f0;
+      font-size: 14px;
+      font-weight: normal;
+      padding-left: 12px;
+      color: #464648;
+   }
+
+   th {
+
+      // this is for to affect first one due to sorter-wrapper arrow gettting cloapse.
+      //  + span{
+      //       display: flex;
+      //       justify-content: space-between;
+      //    }
+      .sorter-wrapper {
+         padding-left: 12px;
+         float: right;
+         margin-top: 4px;
+
+         .arrow-up.active {
+            border-bottom: 4px solid #333333;
+         }
+
+         .arrow-up.off {
+            border-bottom: 4px solid #8b99a7;
+         }
+
+         .arrow-down.active {
+            border-top: 4px solid #333333;
+         }
+
+         .arrow-down.off {
+            border-top: 4px solid #8b99a7;
+         }
+
+         .arrow-up {
+            border-bottom: 4px solid #8b99a7;
+         }
+
+         .arrow-down {
+            border-top: 4px solid #8b99a7;
+         }
+      }
+   }
+
+   // This is for the whole row
+   td {
+      color: #333333;
+      font-size: 13px;
+      padding-left: 12px;
+   }
+
+   // This is for the first column.
+   td:first-child {
+      color: #333333;
+      font-size: 13px;
+   }
+}
+
+// This is to remove the table strip on each even rows
+.euka-datatables .datatable tr:nth-child(2n):not(.child-table-tr) {
+   background-color: white !important;
+}
+
+// This is due to removing the strip from the 2n rows and causing the hover unable to view.
+.euka-datatables .datatable tr:nth-child(2n):not(.child-table-tr):hover {
+   background-color: #f3fafe !important;
+}
+
+// This is for the table footer.
+.euka-datatables .table-footer {
+   span {
+      color: #464648;
+      padding-left: 0px !important;
+      padding-right: 0px;
+   }
+
+   .pagination button {
+      color: #464648;
+      padding: 5px 8px;
+   }
+
+   .pagination .active {
+      font-size: 13px;
+      padding: 4px;
+      margin: 5px;
+      height: 26px;
+      width: 26px;
+      color: white;
+      background-color: #27aae1;
+      border-radius: 100%;
+   }
+
+   .pagination .arrows {
+      padding: 5px 8px;
+   }
+
+   .pagination-page-count {
+      padding: 8px 0px 9px !important;
+   }
 }
 
 @media screen and (max-width: 480px) {
@@ -105,6 +297,92 @@
       & .pagination-page-count {
          display: none;
       }
+   }
 
+   // this is to cetner the content footer when mobile view.
+   .euka-datatables .table-footer {
+      justify-content: center !important;
+   }
+
+   // This is due to table multiple columns are showing when changing the mobile view.
+   .euka-datatables .datatable-wrapper tr {
+      th {
+         font-size: 15.4px !important;
+      }
+
+      td {
+         font-size: 15.4px !important;
+      }
+   }
+}
+
+// for uselist page styling
+
+.userList-table {
+   position: relative;
+}
+
+.userList-table .euka-datatables .table-header {
+   width: calc(100% - 158px);
+}
+
+.userList-table .btnAddUser {
+   position: absolute;
+   top: 14px;
+   right: 0;
+   height: 36px;
+   width: 134px;
+   border-radius: 4px;
+   font-family: Bronova;
+   font-size: 14px;
+   font-weight: 400;
+   line-height: 15px;
+   letter-spacing: 0em;
+   padding: 0 15px;
+}
+
+@media screen and (max-width: 480px) {
+   .userList-table .euka-datatables .table-header {
+      padding-bottom: 40px;
+   }
+   td {
+      display: flex;
+   }
+
+   .userList-table .btnAddUser {
+      left: 0;
+      right: inherit;
+      top: 105px;
+   }
+
+   .euka-datatables .table-filters {
+      gap: 0;
+      .date-filter{
+         margin-bottom:16px;
+      }
+   }
+
+   .table-footer .pagination {
+      display: flex;
+      width: 90%;
+      justify-content: center;
+   }
+}
+
+@media screen and (min-width: 768px) {
+   tr > *:nth-child(2) {
+       display: none;
+   }
+}
+@media screen and (max-width: 767px) {
+   tr td[data-column_index="6"] {
+      display: none;
+   }
+}
+
+@media screen and (max-width: 480px) {
+   .euka-datatables .datatable-wrapper tr th {
+      width: 150px;
+      max-width: 150px;
    }
 }

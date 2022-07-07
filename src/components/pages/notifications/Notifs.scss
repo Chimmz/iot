@@ -2,3 +2,16 @@
     white-space: break-spaces;
 }
 
+@media screen and (max-width:460px) {
+    td{
+        div{
+            &.notifyTime{
+                color: #333333 !important;
+            }
+            &.notifyType{
+                margin-left: 35px;
+            }
+        }
+    }
+    
+}

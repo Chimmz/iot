@@ -5,20 +5,7 @@ import Backdrop from '../backdrop/Backdrop';
 import './Dialog.scss';
 
 const DialogHeader = props => {
-   return (
-      <div className="dialog-header">
-         {props.children}
-         {props.canClose && (
-            <button
-               type="button"
-               className="btn-close"
-               data-bs-dismiss="modal"
-               aria-label="Close"
-               onClick={props.onClose}
-            ></button>
-         )}
-      </div>
-   );
+   return <div className="dialog-header">{props.children}</div>;
 };
 
 const DialogBody = props => <div className="dialog-body">{props.children}</div>;
@@ -38,8 +25,23 @@ class Dialog extends React.Component {
    render() {
       return (
          <>
-            <div className="dialog shadow-lg">{this.props.children}</div>
-            <Backdrop show={this.props.show} />
+            <div className="dialog shadow-lg">
+               {this.props.children}
+               {this.props.closable && (
+                  <button
+                     type="button"
+                     className="btn-close"
+                     data-bs-dismiss="modal"
+                     aria-label="Close"
+                     onClick={this.props.close}
+                  ></button>
+               )}
+            </div>
+            <Backdrop
+               show
+               blur={this.props.blurBackdrop}
+               onClick={this.props.close}
+            />
          </>
       );
    }

@@ -14,6 +14,16 @@ export const selectCurrentUserRoles = createSelector(
    currentUser => currentUser.roles
 );
 
+export const selectUserViewRole = createSelector(
+   [selectCurrentUserRoles],
+   roles => roles?.find(role => role?.roleType.toLowerCase() === 'view')
+);
+
+export const selectUserAccessRole = createSelector(
+   [selectCurrentUserRoles],
+   roles => roles?.find(role => role?.roleType.toLowerCase() === 'access')
+);
+
 export const selectUserLoggedIn = createSelector(
    [selectUser],
    user => user.isLoggedIn
@@ -39,4 +49,11 @@ export const selectIsLoading = createSelector(
 export const selectUserPortfolio = createSelector(
    [selectUser],
    user => user.portfolio
+);
+
+// This is for fetching the roles to render the data in the dashboard UI
+// using by dashboard highlights and dashboard home.
+export const userRoles = createSelector(
+   [selectUser],
+   user => user.currentUser.roles
 );

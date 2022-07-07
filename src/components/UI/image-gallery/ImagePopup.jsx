@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './ImagePopup.scss';
 function ImagePopup(props) {
-    const {clickedImgProp, listOfImages} = props;
+    const {clickedImgProp, listOfImages, onDismiss} = props;
     const [clickedImg, setClickedImg] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(null);
 
@@ -21,6 +21,7 @@ function ImagePopup(props) {
     const handleClick = (e) => {
         if (e.target.classList.contains("dismiss")) {
           setClickedImg(null);
+          onDismiss(null,0)
         }
       };
 

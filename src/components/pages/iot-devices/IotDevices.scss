@@ -8,8 +8,37 @@
 @media screen and (min-width: 460px) {
     #iotDeviceTable .overflow-x-scroll { 
         max-width: 40ch;
-        min-width: 40ch
+        min-width: 40ch;
+        overflow: auto !important;
     }
 }
 
+
+// Added for the mobile device table alignment.
+@media screen and (max-width: 480px) {
+    td{
+        .custom-content{
+            padding-left:11px;
+            font-size:12px;
+        }
+        div{
+            &.IOTroomName{
+                margin-left:72px !important;
+            }
+            &.serialNumber{
+                margin-left:35px;
+            }
+            &.deviceModel{
+                margin-left:50px;
+            }
+            &.deviceSensor{
+                margin-left: 85px;
+            }
+            &.updatedTime{
+                margin-left:5px;
+            }
+        }
+    }
+}
+//End of the mobile device table alignment
 

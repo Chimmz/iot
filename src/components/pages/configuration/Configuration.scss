@@ -6,13 +6,13 @@
 
    /* Track */
    &::-webkit-scrollbar-track {
-      background: #eeeeee;
+      background: transparent;
       height: 7px;
    }
 
    /* Handle */
    &::-webkit-scrollbar-thumb {
-      background: #dadada;
+      background: #b9b9b9;
       height: 3px;
       border-radius: 999px;
    }
@@ -21,6 +21,9 @@
    &::-webkit-scrollbar-thumb:hover {
       background: #b9b9b9;
    }
+}
+.light-scrollbar::-webkit-scrollbar-thumb {
+   background: #dadada;
 }
 
 .addgGroup-headtitle {

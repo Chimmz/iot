@@ -11,29 +11,35 @@ import * as browserUtils from '../../utils/browserUtils';
 // ------------------- Synchronous action creators: --------------------------
 
 export const setUser = user => ({ type: userActions.SET_USER, payload: user });
+
 export const logout = () => ({ type: userActions.LOGOUT_USER });
 
 // The set loading action creator when fetching from API
 export const setIsLoading = boolean => ({
    type: userActions.SET_IS_LOADING,
-   payload: { isLoading: boolean }
+   payload: { isLoading: boolean },
 });
 
 // The set user accepted terms and conditions creator
 export const setUserAccepted = boolean => ({
    type: userActions.SET_USER_ACCEPTED,
-   payload: { isAccepted: boolean }
+   payload: { isAccepted: boolean },
 });
 
 // The set user status message action creator
 export const setUserStatusMsg = newStatus => ({
    type: userActions.SET_USER_STATUS_MSG,
-   payload: { newStatus }
+   payload: { newStatus },
 });
 
 export const setUserPortfolio = portfolioArr => ({
    type: userActions.SET_USER_PORTFOLIO,
-   payload: { portfolioArr }
+   payload: { portfolioArr },
+});
+
+export const changeUserRole = (roleType, newRole) => ({
+   type: userActions.CHANGE_USER_ROLE,
+   payload: { roleType, newRole },
 });
 
 // ------------------------ Asynchronous action creators: ----------------------------------
@@ -48,30 +54,40 @@ export const getLegalUser = async (userId, userToken) => {
 };
 
 // The login action creator
-export function login(loginDetails, ...otherArgs) {
+export function login(args) {
+   const {
+      loginDetails,
+      rememberMe,
+      pushEmailError,
+      pushPasswordError,
+      redirect,
+      advanceLoginAttemptsCounter,
+      resetLoginAttemptsCount,
+   } = args;
+   const { email, password } = loginDetails;
+
+   const handleFieldError = err => {
+      switch (err?.fieldName.toLowerCase()) {
+         case 'username':
+            pushEmailError(err.message);
+            break;
+         default:
+            break;
+      }
+   };
    return async dispatch => {
-      const { email, password } = loginDetails;
-      const [rememberMeChecked, pushEmailError, pushPasswordError, redirect] =
-         otherArgs;
-
-      const handleBackendError = err => {
-         switch (err?.fieldName) {
-            case 'username':
-               pushEmailError('Wrong email entered');
-               break;
-         }
-      };
-
       try {
          // makeRequest() returns a promise
-         const makeRequest = () =>
-            // fetchWithinTimeout races the promise passed with a timeout promise
-            asyncUtils.fetchWithinTimeout(API.loginUser(email, password));
-
-         const startLoading = () => dispatch(setIsLoading(true));
-         const stopLoading = () => dispatch(setIsLoading(false));
-         const loadingConfig = { startLoading, stopLoading };
-
+         const makeRequest = () => {
+            // fetchWithinTimeout races its arg with a timeout promise
+            return asyncUtils.fetchWithinTimeout(
+               API.loginUser(email, password)
+            );
+         };
+         const loadingConfig = {
+            startLoading: () => dispatch(setIsLoading(true)),
+            stopLoading: () => dispatch(setIsLoading(false)),
+         };
          const res = await asyncUtils.handleFetchLoadingState(
             makeRequest,
             loadingConfig
@@ -79,13 +95,13 @@ export function login(loginDetails, ...otherArgs) {
          console.log(res);
 
          // First, check for response errors
-         res?.errors?.forEach(handleBackendError);
-         if (res?.errors) return;
+         if (res?.errors) return res.errors.forEach(handleFieldError);
 
-         // Second, check response message
+         // Second, check for a response message
          switch (res?.message) {
             case 'BAD CREDENTIALS':
                pushPasswordError('Wrong email or password entered');
+               advanceLoginAttemptsCounter();
                break;
 
             case 'ACCOUNT_LOCKED':
@@ -97,27 +113,31 @@ export function login(loginDetails, ...otherArgs) {
                      )
                   )
                );
+               resetLoginAttemptsCount();
                break;
 
             case 'DEFAULT_PASSWORD':
                dispatch(setUser(res));
+               resetLoginAttemptsCount();
                break;
 
             case 'USER_VALID':
                dispatch(setUser(res));
+               resetLoginAttemptsCount();
                redirect();
 
                // Save user's login credentials as a browser cookie
-               rememberMeChecked &&
+               rememberMe &&
                   browserUtils.createCookie(
                      process.env.REACT_APP_REMEMBER_ME_COOKIE_KEY,
                      `${email}/${password}`,
                      999
                   );
-
+               resetLoginAttemptsCount();
                break;
             default:
                pushPasswordError(res.message);
+               advanceLoginAttemptsCounter();
          }
       } catch (err) {
          console.log('EERRROR: ', err);
@@ -127,7 +147,12 @@ export function login(loginDetails, ...otherArgs) {
 
 // The change password action creator
 export const changePassword = (userDetails, ...otherArgs) => {
-   const [pushCurrPasswordError, navigate] = otherArgs;
+   const [
+      pushCurrPasswordError,
+      navigate,
+      displayAsModal,
+      handleToggleDisplayPasswordModal,
+   ] = otherArgs;
 
    return async dispatch => {
       try {
@@ -146,9 +171,8 @@ export const changePassword = (userDetails, ...otherArgs) => {
 
          const res = await asyncUtils.handleFetchLoadingState(makeRequest, {
             startLoading,
-            stopLoading
+            stopLoading,
          });
-         console.log(res);
 
          const failure = res.message
             .toLowerCase()
@@ -161,55 +185,19 @@ export const changePassword = (userDetails, ...otherArgs) => {
          // Change user status message to USER_VALID
          dispatch(setUserStatusMsg(userStatus.USER_VALID));
 
+         console.log(displayAsModal);
+         if (displayAsModal) return handleToggleDisplayPasswordModal(true);
+
          // Now, display the change password success page
          navigate('/change-password/success', {
-            state: { passwordChanged: true }
+            state: { passwordChanged: true },
          });
-
          // 5secs later, go to dashboard
          setTimeout(() => {
             navigate('/dashboard', { replace: true });
          }, 5000);
       } catch (err) {
-         dispatch(
-            alertCreators.flashAlert(
-               new alertUtils.Alert(
-                  'Sorry, something wrong has happened',
-                  'error'
-               )
-            )
-         );
-      }
-   };
-};
-
-// The reset password action creator
-export const resetPassword = function (userEmail, ...otherArgs) {
-   const [pushEmailError, setEmailSent] = otherArgs;
-   return async dispatch => {
-      try {
-         // A function that returns a promise
-         const makeRequest = () =>
-            asyncUtils.fetchWithinTimeout(API.resetPassword(userEmail));
-
-         const startLoading = () => dispatch(setIsLoading(true));
-         const stopLoading = () => dispatch(setIsLoading(false));
-
-         const res = await asyncUtils.handleFetchLoadingState(makeRequest, {
-            startLoading,
-            stopLoading
-         });
-         console.log(res);
-
-         switch (res?.message) {
-            case 'EmailID not found':
-               return pushEmailError('Sorry, this email is invalid');
-         }
-
-         // Show the email success modal
-         setEmailSent(true);
-      } catch (err) {
-         console.log('Error: ', err);
+         console.log(err);
       }
    };
 };

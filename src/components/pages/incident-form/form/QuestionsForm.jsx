@@ -30,7 +30,7 @@ function QuestionsForm(props) {
       currentIncident,
       setValidationErrors,
       clearFieldError,
-      pushFieldError
+      pushFieldError,
    } = useContext(incidentFormContext);
 
    const uncheckRadioFields = function () {
@@ -43,15 +43,6 @@ function QuestionsForm(props) {
       uncheckRadioFields();
       setValidationErrors({});
    }, [currentIncident]); // New questions are fetched when currentIncident changes
-
-   const fieldValidators = {
-      // isRequired, minLength must match function names in src/validators/inputValidators.js
-      // The sub-field array elements will be passed as args to the matching function
-      text: { isRequired: [] },
-      radio: { isRequired: [] },
-      calendar: { isRequired: [] },
-      file: { minLength: [1, 'No images uploaded'] }
-   };
 
    const getHiddenFields = () => {
       return questions.filter((que, i) => {
@@ -67,24 +58,33 @@ function QuestionsForm(props) {
       });
    };
 
+   const fieldValidators = {
+      // isRequired, minLength must match function names in src/validators/inputValidators.js
+      // The sub-field array elements will be passed as args to the matching function
+      text: { isRequired: [] },
+      radio: { isRequired: [] },
+      calendar: { isRequired: [], isValidDate: [] },
+      file: { minLength: [1, 'No images uploaded'] },
+   };
+
    const validateFields = function () {
       let errorExists = false;
 
       const runValidators = que => {
-         const validator = fieldValidators[que.responseFieldType];
+         const fieldValidator = fieldValidators[que.responseFieldType];
 
-         for (const validatorName in validator) {
-            const params = validator[validatorName];
+         for (const [validatorName, params] of Object.entries(fieldValidator)) {
             const obj = { userInput: answers[que.questionOrder] };
             // Execute the matching function
             const feedback = inputValidators[validatorName]?.call(
                obj,
                ...params
             );
-            if (feedback.status !== inputValidators.statusTypes.failed) return;
+            if (feedback.status !== inputValidators.statusTypes.failed)
+               continue;
             errorExists = true;
-            // clearFieldError(que.questionOrder);
             pushFieldError(que.questionOrder, feedback);
+            return;
          }
       };
 
@@ -124,7 +124,7 @@ function QuestionsForm(props) {
          incidentID,
          RecordResponse: answers,
          incidentRecordHeaderID,
-         createdBy: currentUser.userId
+         createdBy: currentUser.userId,
       };
 
       try {
@@ -168,7 +168,7 @@ function QuestionsForm(props) {
 // Map Redux state to props for this component
 const mapStateToProps = createStructuredSelector({
    currentUser: userSelectors.selectCurrentUser,
-   userToken: userSelectors.selectUserToken
+   userToken: userSelectors.selectUserToken,
 });
 
 export default connect(mapStateToProps)(QuestionsForm);

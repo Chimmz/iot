@@ -1,39 +1,32 @@
-import { SET_NOTIFICATIONS_LOADING, GET_NOTIFICATIONS } from './notifications-actions';
-import API from '../../utils/apiUtils';
-import * as asyncUtils from '../../utils/asyncUtils';
+import {
+  ADD_UNREAD_NOTIFICATION,
+  REMOVE_NOTIFICATIONS,
+  PUSH_UNREAD_NOTIFICATIONS
+} from './notifications-actions';
+
 import * as dateUtils from '../../utils/dateUtils';
-import * as notificationUtils from './notification-utils';
+import API from '../../utils/apiUtils';
+import { fetchWithinTimeout } from '../../utils/asyncUtils';
 
-export const setNotificationLoading = boolean => ({
-    type: SET_NOTIFICATIONS_LOADING,
-    payload: { isLoading: boolean }
+export const addUnreadNotif = notif => ({
+  type: PUSH_UNREAD_NOTIFICATIONS,
+  payload: { notifs: [notif] }
 });
-export function getNotifications(portfolio, timePeriod, userToken) {
-    return async dispatch => {
-        try {
-            // A function that returns an unawaited promise
-            const makeRequest = () => {
-                return asyncUtils.getResponseWithinTimeout(
-                    notificationUtils.fetchNotifications(portfolio, timePeriod, userToken),
-                    '30secs'
-                );
-            };
 
-            const res = asyncUtils.handleLoadingStateAsync(
-                makeRequest,
-                setNotificationLoading,
-                dispatch
-            );
+export const loadNewNotifs = (currentPortfolio, userToken) => {
+  return async dispatch => {
+    const [fromDate, toDate] = dateUtils.getDateRangeBasedOnPeriod('1-day');
+    try {
+      const notifs = await fetchWithinTimeout(
+        API.getNotifications(userToken, currentPortfolio.portfolioHeaderId, fromDate, toDate)
+      );
 
-            const notifications = (await res) || [];
-            console.log(notifications);
-
-            dispatch({
-                type: GET_NOTIFICATIONS,
-                payload: { portfolioName: portfolio.name, notifications }
-            });
-        } catch (err) {
-            console.log(err);
-        }
-    };
-}
+      console.log('notifs: ', notifs);
+      if (!notifs) return;
+      const newNotif = notifs.slice(-1).pop();
+      dispatch(addUnreadNotif(newNotif));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};

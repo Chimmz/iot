@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-
 // The Redux user state selectors
 import * as userSelectors from '../../../../redux/user/user-selectors';
 import * as portfolioSelectors from '../../../../redux/portfolio/portfolio-selectors';
-
+import * as notifCreators from '../../../../redux/notification/notification-action-creators';
 // Hooks
 import useInput from '../../../../hooks/useInput';
 import useFetch from '../../../../hooks/useFetch';
@@ -15,12 +13,11 @@ import useList from '../../../../hooks/useList';
 import useMultiSelect from '../../../../hooks/useMultiSelect';
 
 import { configurationContext } from '../../../../contexts/configurationContext';
-
 import {
    getIncidentTypeOptions,
    getNotificationOptions,
    getAvailabilityOptions,
-   getSelectionValues
+   getSelectionValues,
 } from './utils';
 import * as userUtils from '../../../../redux/user/user-utils';
 import API from '../../../../utils/apiUtils';
@@ -36,7 +33,7 @@ import Spinner from '../../../UI/spinner/Spinner';
 import './AddGroup.scss';
 
 function AddGroup(props) {
-   const { currentUser, currentPortfolio, userToken, show } = props;
+   const { currentUser, currentPortfolio, userToken, dispatch } = props;
    const navigate = useNavigate();
 
    const { setGroupsUpdated } = useContext(configurationContext);
@@ -55,7 +52,7 @@ function AddGroup(props) {
    const {
       items: addedUsers,
       addItem: includeUser,
-      removeItem: excludeUser
+      removeItem: excludeUser,
    } = useList();
 
    // To control the group name input
@@ -64,7 +61,7 @@ function AddGroup(props) {
       handleChange: handleChangeGroupName,
       runValidators: runGroupNameValidators,
       validationErrors: groupNameValidationErrors,
-      setValidationErrors: setGroupNameValidationErrors
+      setValidationErrors: setGroupNameValidationErrors,
    } = useInput({ init: '', validators: [{ isRequired: [] }] });
 
    // To control the selected incident types
@@ -78,8 +75,8 @@ function AddGroup(props) {
    } = useMultiSelect({
       init: [],
       validators: [{
-         // 'minLength' and other validation names must match a matching function in /src/validators/inputValidators.js. This function will be executed.
-         // The array elements will be passed as arguments to the matching function in the same order
+         // 'minLength' and other validator names must match any function name in /src/validators/inputValidators.js. This matching function will be executed.
+         // The array elements below are passed as args to the matching function in the exact same order
          minLength: [1, 'No incident type selected']
       }]
    });
@@ -100,7 +97,7 @@ function AddGroup(props) {
 
    const {
       inputValue: searchUserQuery,
-      handleChange: handleChangeSearchUserQuery
+      handleChange: handleChangeSearchUserQuery,
    } = useInput({ init: '', validators: [{ isRequired: [] }] });
 
    // prettier-ignore
@@ -126,7 +123,7 @@ function AddGroup(props) {
    };
 
    // This creates the group by contacting the API
-   const handleCreateGroup = () => {
+   const createGroup = () => {
       const body = {
          groupId: 0,
          groupName,
@@ -134,12 +131,13 @@ function AddGroup(props) {
          userIds: [...addedUsers],
          incidentTypeIdList: [...getSelectionValues(selectedIncidentTypes)],
          availabilityIdList: [...getSelectionValues(selectedAvailabs)],
-         notificationTypeIdList: [...getSelectionValues(selectedNotifs)]
+         notificationTypeIdList: [...getSelectionValues(selectedNotifs)],
       };
       console.log(body);
-
       const request = sendAddGroupRequest(API.createGroup(body, userToken)); // Returns a promise
+
       request.then(res => {
+         dispatch(notifCreators.loadNewNotifs(currentPortfolio, userToken));
          setGroupsUpdated(true);
          close();
       });
@@ -153,76 +151,79 @@ function AddGroup(props) {
          runGroupNameValidators(),
          runIncidentTypeValidators(),
          runNotifsValidators(),
-         runAvailabilityValidators()
+         runAvailabilityValidators(),
       ];
+      if (!errors.flat().length) return createGroup();
 
-      if (!errors.flat().length) return handleCreateGroup();
       [
          setGroupNameValidationErrors,
          setIncidentTypeValidationErrors,
          setNotifsValidationErrors,
-         setAvailabilityValidationErrors
+         setAvailabilityValidationErrors,
       ].forEach((set, i) => set(errors[i]));
    };
 
-   useEffect(async () => {
-      const responses = await sendManyRequests(
-         Promise.all([
-            API.getIncidentTypes(userToken),
-            API.getNotificationTypes(userToken),
-            API.getAvailabilities(userToken),
-            API.getUsersInPortfolio(
-               currentPortfolio?.portfolioHeaderId,
-               userToken
-            )
-         ])
-      );
+   useEffect(() => {
+      const reqs = [
+         API.getIncidentTypes(userToken),
+         API.getNotificationTypes(userToken),
+         API.getAvailabilities(userToken),
+         API.getUsersInPortfolio(
+            currentPortfolio?.portfolioHeaderId,
+            userToken
+         ),
+      ];
+      const requests = sendManyRequests(Promise.all(reqs));
 
-      [setIncidentTypes, setNotifTypes, setAvailabilities, setUsers].forEach(
-         (set, i) => set(responses[i])
-      );
+      const handleResponses = responses => {
+         [setIncidentTypes, setNotifTypes, setAvailabilities, setUsers].forEach(
+            (set, i) => set(responses[i])
+         );
+      };
+      requests.then(handleResponses).catch(console.log);
    }, []);
 
+   if (getAllTypesLoading) return <Spinner show noContent />;
    const containerClassName = `add-group thin-scrollbar ${
       props.show ? 'show' : 'fade'
    }`;
-
    return (
       <>
          <Backdrop show={props.show} />
          <div className={containerClassName}>
-            <h2 className='page-heading fw-600 mb-lg my-sm-5'>
-               Add New User Group
-            </h2>
-            <form onSubmit={handleSubmit} className='w-md-75'>
+            <h2 className="page-heading fw-600 my-sm-4">Add New User Group</h2>
+            <form onSubmit={handleSubmit} className="w-md-75">
                {/* ----------------- Group Name field ----------------------*/}
-               <InputGroup className='mb-4 row'>
+               <InputGroup className="mb-4 row">
                   <label
-                     htmlFor='groupName'
-                     className='col-sm-4 col-form-label'>
+                     htmlFor="groupName"
+                     className="col-sm-4 col-form-label"
+                  >
                      Group Name
                   </label>
-                  <div className='col-sm-8' style={{ position: 'relative' }}>
+                  <div className="col-sm-8" style={{ position: 'relative' }}>
                      <InputField
-                        type='text'
-                        id='groupName'
-                        className=''
+                        type="text"
+                        id="groupName"
+                        className=""
                         value={groupName}
                         onChange={handleChangeGroupName}
                         validationErrors={groupNameValidationErrors}
                      />
                   </div>
                </InputGroup>
-               <hr className='my-3'></hr>
-
+               <div className="col-sm-8 ms-auto">
+                  <hr className="my-3" style={{ width: '93%' }}></hr>
+               </div>
                {/* ---------------- Incident Type field --------------*/}
-               <InputGroup className='row'>
+               <InputGroup className="row">
                   <label
-                     htmlFor='incidentType'
-                     className='col-sm-4 col-form-label'>
+                     htmlFor="incidentType"
+                     className="col-sm-4 col-form-label"
+                  >
                      Incident Type
                   </label>
-                  <div className='col-sm-8' style={{ position: 'relative' }}>
+                  <div className="col-sm-8" style={{ position: 'relative' }}>
                      <MultipleSelect
                         options={getIncidentTypeOptions(incidentTypes)}
                         value={selectedIncidentTypes}
@@ -233,13 +234,14 @@ function AddGroup(props) {
                </InputGroup>
 
                {/* ---------------- Communication Type field ----------------------*/}
-               <InputGroup className='row'>
+               <InputGroup className="row">
                   <label
-                     htmlFor='incidentType'
-                     className='col-sm-4 col-form-label'>
+                     htmlFor="incidentType"
+                     className="col-sm-4 col-form-label"
+                  >
                      Communication Type
                   </label>
-                  <div className='col-sm-8' style={{ position: 'relative' }}>
+                  <div className="col-sm-8" style={{ position: 'relative' }}>
                      <MultipleSelect
                         options={getNotificationOptions(notifTypes)}
                         value={selectedNotifs}
@@ -250,29 +252,31 @@ function AddGroup(props) {
                </InputGroup>
 
                {/* ---------------- Search User field ----------------------*/}
-               <InputGroup className='row mb-4'>
+               <InputGroup className="row mb-4">
                   <label
-                     htmlFor='searchUser'
-                     className='col-sm-4 col-form-label'>
+                     htmlFor="searchUser"
+                     className="col-sm-4 col-form-label"
+                  >
                      Search User
                      <br />
                      (Optional)
                   </label>
-                  <div className='col-sm-8' style={{ position: 'relative' }}>
+                  <div className="col-sm-8" style={{ position: 'relative' }}>
                      <InputField
-                        type='text'
-                        id='searchUser'
-                        className=''
+                        type="text"
+                        id="searchUser"
+                        className=""
                         value={searchUserQuery}
                         onChange={handleChangeSearchUserQuery}
                         validationErrors={[]}
                      />
                   </div>
-                  <div className='col-sm-4 col-form-label'></div>
+                  <div className="col-sm-4 col-form-label"></div>
                   {/* ----- Search User results -----*/}
                   <div
-                     className='col-sm-8 search thin-scrollbar'
-                     style={{ position: 'relative' }}>
+                     className="col-sm-8 search thin-scrollbar"
+                     style={{ position: 'relative' }}
+                  >
                      <SearchUserResults
                         query={searchUserQuery}
                         users={users}
@@ -283,13 +287,14 @@ function AddGroup(props) {
                </InputGroup>
 
                {/* ---------------- Availability field ----------------------*/}
-               <InputGroup className='row'>
+               <InputGroup className="row">
                   <label
-                     htmlFor='incidentType'
-                     className='col-sm-4 col-form-label'>
+                     htmlFor="incidentType"
+                     className="col-sm-4 col-form-label"
+                  >
                      Availability
                   </label>
-                  <div className='col-sm-8' style={{ position: 'relative' }}>
+                  <div className="col-sm-8" style={{ position: 'relative' }}>
                      <MultipleSelect
                         options={getAvailabilityOptions(availabilities)}
                         value={selectedAvailabs}
@@ -300,7 +305,7 @@ function AddGroup(props) {
                </InputGroup>
 
                {/* ---------------- Action buttons ----------------------*/}
-               <div className='actions'>
+               <div className="actions col-sm-8 ms-auto">
                   <ActionButtons
                      isAddingGroup={addGroupRequestLoading}
                      close={close}
@@ -308,7 +313,6 @@ function AddGroup(props) {
                </div>
             </form>
          </div>
-         <Spinner show={getAllTypesLoading} />
       </>
    );
 }
@@ -316,7 +320,7 @@ function AddGroup(props) {
 const mapStateToProps = createStructuredSelector({
    currentUser: userSelectors.selectCurrentUser,
    currentPortfolio: portfolioSelectors.selectCurrentPortfolio,
-   userToken: userSelectors.selectUserToken
+   userToken: userSelectors.selectUserToken,
 });
 
 export default connect(mapStateToProps)(AddGroup);

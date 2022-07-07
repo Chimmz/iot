@@ -21,6 +21,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Copyright from '../../../UI/footer/Copyright';
 
 // External custom components
 import Spinner from '../../../UI/spinner/Spinner';
@@ -31,7 +32,14 @@ import * as inputValidators from '../../../../validators/inputValidator';
 
 import './ChangePassword.scss';
 
-function ChangePassword({ currentUser, userToken, userState, dispatch }) {
+function ChangePassword({
+   currentUser,
+   userToken,
+   userState,
+   dispatch,
+   displayPasswordModal = false,
+   handleToggleDisplayPasswordModal,
+}) {
    const navigate = useNavigate();
 
    const {
@@ -40,17 +48,17 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
       runValidators: runCurrPassValidators,
       validationErrors: currPassErrors,
       setValidationErrors: setCurrPassErrors,
-      pushError: pushCurrPasswordError
+      pushError: pushCurrPasswordError,
    } = useInput({
       init: '',
       validators: [
          {
-            isRequired: ['This field is required']
+            isRequired: ['This field is required'],
             // Key name (Ex: 'isRequired', 'isEmail') must match a function name in /src/validators/inputValidator.js
 
             // Array elements will be passed as args to the matching function in the order that they're stated here
-         }
-      ]
+         },
+      ],
    });
 
    // prettier-ignore
@@ -70,7 +78,8 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
          { containsDigit: [] },
          { isStrongPassword: ['Password is weak. Choose a strong password'] },
          { hasPasswordExceptions: ['Password must not contain %, -'] }
-         // Key name (Ex: 'isRequired', 'minLength', etc) must match function names in /src/validators/inputValidator.js
+         // Key name (Ex: 'isRequired', 'minLength', etc) must match a function name in /src/validators/inputValidator.js
+
          // Array elements will be passed as args to the matching function in the order that they're stated here
       ]
    });
@@ -80,13 +89,13 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
       handleChange: onChangeConfirmPass,
       runValidators: runConfirmPassValidators,
       validationErrors: confirmPassErrors,
-      setValidationErrors: setConfirmPassErrors
+      setValidationErrors: setConfirmPassErrors,
    } = useInput({
       init: '',
       validators: [
          { isRequired: ['This field is required'] },
-         { isSameAs: [newPassword, 'Passwords do not match'] }
-      ]
+         { isSameAs: [newPassword, 'Passwords do not match'] },
+      ],
    });
 
    const clearAllValidatorErrors = () => {
@@ -100,30 +109,30 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
       const errors = [
          runCurrPassValidators(),
          runNewPassValidators(),
-         runConfirmPassValidators()
+         runConfirmPassValidators(),
       ];
-
-      if (errors.flat().length)
-         // These 'set' actions show validation errors if any.
-         return [
-            setCurrPassErrors,
-            setNewPassErrors,
-            setConfirmPassErrors
-         ].forEach((set, i) => set(errors[i]));
+      if (errors.flat().length) {
+         [setCurrPassErrors, setNewPassErrors, setConfirmPassErrors].forEach(
+            (set, i) => set(errors[i])
+         );
+         return;
+      }
 
       // Proceed to change password
       const userDetails = {
          userId: currentUser.userId,
          currentPassword,
          newPassword,
-         userToken
+         userToken,
       };
 
       dispatch(
          userCreators.changePassword(
             userDetails,
             pushCurrPasswordError,
-            navigate
+            navigate,
+            displayPasswordModal,
+            handleToggleDisplayPasswordModal
          )
       );
       clearAllValidatorErrors();
@@ -132,120 +141,149 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
    return (
       <>
          <Spinner show={userState.isLoading}></Spinner>
-         <main className='create__password__wrapp forgot__password auth__wrapper py-5 position-relative'>
+         <main className="create__password__wrapp forgot__password auth__wrapper py-5 position-relative vh-100">
             <Container>
-               <div className='h3 fw-normal'>
+               <div className="h3 fw-normal">
                   Hi
-                  <span className='text-primary'>
+                  <span className="text-primary">
                      {' '}
                      {currentUser.firstName} !
                   </span>
                </div>
 
                {/* space */}
-               <div className='py-3 py-md-4 py-lg-5'>&nbsp;</div>
+               <div className="py-3 py-md-4 py-lg-5">&nbsp;</div>
 
-               <Row className='align-items-center g-4 g-lg-5'>
-                  <Col md='6'>
-                     <div className='left__wrapp'>
-                        <h1 className='text-primary fw-bold ff-bronova'>
+               <Row className="align-items-center g-4 g-lg-5">
+                  <Col md="6">
+                     <div className="left__wrapp">
+                        <h1 className="text-primary fw-bold ff-bronova">
                            Create a new password
                         </h1>
                         <Form
-                           className='mt-4 form__wrapp'
-                           onSubmit={handleSubmit}>
-                           <Form.Label className='text-gray fs16'>
+                           className="mt-4 form__wrapp"
+                           onSubmit={handleSubmit}
+                        >
+                           <Form.Label className="text-gray fs16">
                               Type and confirm a secure new password for the
                               account.
                            </Form.Label>
 
                            {/* InputField is a custom component (not a React-Bootstrap compon.) returning Form.Control & Form.Control.Feedback */}
-                           <InputGroup className='mb-3 mb-lg-4'>
-                              <InputGroup.Text id='password'>
-                                 <img
-                                    src='images/icons/lock-gray.svg'
-                                    alt='mail-svg-icon'
-                                 />
-                              </InputGroup.Text>
+                           <InputGroup className="mb-3 mb-lg-4">
                               <InputField
-                                 type='password'
+                                 type="password"
                                  value={currentPassword}
                                  onChange={onChangeCurrPass}
-                                 placeholder='Enter current password'
-                                 aria-label='Enter password'
-                                 aria-describedby='password'
+                                 placeholder="Enter current password"
+                                 aria-label="Enter password"
+                                 aria-describedby="password"
                                  validationErrors={currPassErrors}
+                                 className="input-icon-txt"
                               />
+                              <InputGroup.Text id="password" className="input-icon">
+                                 <img
+                                    src="/images/icons/lock-gray.svg"
+                                    alt="mail-svg-icon"
+                                 />
+                              </InputGroup.Text>
                            </InputGroup>
 
                            {/* InputField is a custom component (not a React-Bootstrap compon.) returning Form.Control & Form.Control.Feedback */}
-                           <InputGroup className='mb-3 mb-lg-4'>
-                              <InputGroup.Text id='password'>
-                                 <img
-                                    src='images/icons/lock-gray.svg'
-                                    alt='mail-svg-icon'
-                                 />
-                              </InputGroup.Text>
+                           <InputGroup className="mb-3 mb-lg-4">
                               <InputField
-                                 type='password'
+                                 type="password"
                                  value={newPassword}
                                  onChange={onChangeNewPass}
-                                 placeholder='Enter a new password'
-                                 aria-label='Enter password'
-                                 aria-describedby='password'
+                                 placeholder="Enter a new password"
+                                 aria-label="Enter password"
+                                 aria-describedby="password"
                                  validationErrors={newPassErrors}
+                                 className="input-icon-txt"
                               />
+                              <InputGroup.Text id="password" className="input-icon">
+                                 <img
+                                    src="/images/icons/lock-gray.svg"
+                                    alt="mail-svg-icon"
+                                 />
+                              </InputGroup.Text>
                            </InputGroup>
 
                            {/* InputField is a custom component returning Form.Control & Form.Control.Feedback */}
-                           <InputGroup className='mb-3 mb-lg-4'>
-                              <InputGroup.Text id='password2'>
-                                 <img
-                                    src='images/icons/lock-gray.svg'
-                                    alt='mail-svg-icon'
-                                 />
-                              </InputGroup.Text>
+                           <InputGroup className="mb-3 mb-lg-4">
                               <InputField
-                                 type='password'
+                                 type="password"
                                  value={confirmPassword}
                                  onChange={onChangeConfirmPass}
-                                 placeholder='Confirm new password'
-                                 aria-label='Confirm password'
-                                 aria-describedby='password2'
+                                 placeholder="Confirm new password"
+                                 aria-label="Confirm password"
+                                 aria-describedby="password2"
                                  validationErrors={confirmPassErrors}
+                                 className="input-icon-txt"
                               />
+                              <InputGroup.Text id="password2" className="input-icon">
+                                 <img
+                                    src="/images/icons/lock-gray.svg"
+                                    alt="mail-svg-icon"
+                                 />
+                              </InputGroup.Text>
                            </InputGroup>
 
-                           <Button
-                              type='submit'
-                              varient='primary'
-                              className='rounded'>
-                              Update password
-                           </Button>
+                           <div className="action-group">
+                              <Button
+                                 type="submit"
+                                 varient="primary"
+                                 className="rounded"
+                              >
+                                 {' '}
+                                 Save
+                                 {/* Update password */}
+                              </Button>
+                              {displayPasswordModal == true && (
+                                 <Button
+                                    onClick={handleToggleDisplayPasswordModal}
+                                    variant="outline-secondary"
+                                    className="rounded"
+                                 >
+                                    Cancel
+                                 </Button>
+                              )}
+                           </div>
                         </Form>
                      </div>
                   </Col>
-                  <Col md='6'>
+                  <Col md="6" id="password-change-info" className="d-none d-sm-block">
                      <img
-                        src='images/icons/lock-lg-gray-reset.svg'
-                        alt='lock-svg-icon'
+                        src="/images/icons/lock-lg-gray-reset.svg"
+                        alt="lock-svg-icon"
                      />
 
                      <p
-                        className='fs12 mt-3 w-100 text-gray'
-                        style={{ maxWidth: '360px' }}>
+                        className="fs12 mt-3 w-100 text-gray"
+                        style={{ maxWidth: '360px' }}
+                     >
                         <b>Please note: </b> <br />
                         The password should be at least 8 characters long. To
-                        make it stronger, use upper and lower case letters
-                        numbers, and symbols like ! \ “ ? $ ^ &).
+                        make it stronger, use upper and lower case letters,
+                        numbers and symbols like ! \ “ ? $ ^ &).
                      </p>
                   </Col>
                </Row>
+               <div className="position-absolute bottom-0 start-50">
+                  <p className="fs12 text-center">
+                     © Copyright 2022 InsureTek |{' '}
+                     <span className="d-block d-md-inline-block">
+                        All Rights Reserved |{' '}
+                        <Link to="/privacy-policy">Privacy Policy</Link>
+                     </span>
+                  </p>
+               </div>
             </Container>
-            <p className='fs10 copyright position-absolute start-50 translate-middle-x bottom-0'>
-               © Copyright 2022 | <Link to='/'>Terms of Use</Link> |{' '}
-               <Link to='/'>Privacy Policy</Link>
-            </p>
+            {/* <p className="fs10 copyright position-absolute start-50 translate-middle-x bottom-0">
+               © Copyright 2022 | <Link to="/">Terms of Use</Link> |{' '}
+               <Link to="/">Privacy Policy</Link>
+            </p> */}
+            {/* <Copyright /> */}
          </main>
       </>
    );
@@ -254,7 +292,7 @@ function ChangePassword({ currentUser, userToken, userState, dispatch }) {
 const mapStateToProps = createStructuredSelector({
    userState: userSelectors.selectUser,
    currentUser: userSelectors.selectCurrentUser,
-   userToken: userSelectors.selectUserToken
+   userToken: userSelectors.selectUserToken,
 });
 
 export default connect(mapStateToProps)(ChangePassword);

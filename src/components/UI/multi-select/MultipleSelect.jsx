@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
+import './MultipleSelect.scss';
 
 function MultipleSelect({ options, value, onChange, validationErrors }) {
-   useEffect(() => {
-      const allErrors = document.querySelectorAll('.app-error');
+   const multiSelectRef = useRef();
 
-      allErrors.forEach(error => {
-         const parent = error.parentElement;
-         if (parent.classList.contains('multi-select'))
-            parent.classList.add('border-error', 'form-control', 'is-invalid');
-      });
-   });
+   useEffect(() => {
+      if (!validationErrors.length) return;
+      multiSelectRef.current
+         .querySelector('.dropdown-heading')
+         .classList.add('form-control', 'is-invalid');
+   }, [validationErrors.length]);
+
    return (
-      <>
+      <div ref={multiSelectRef}>
          <MultiSelect
             options={options}
             value={value}
@@ -20,7 +21,7 @@ function MultipleSelect({ options, value, onChange, validationErrors }) {
             labelledBy={'Select'}
          />
          <p className="app-error">{validationErrors?.[0]?.msg}</p>
-      </>
+      </div>
    );
 }
 

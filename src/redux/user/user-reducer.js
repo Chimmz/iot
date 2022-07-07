@@ -33,6 +33,23 @@ const userReducer = function (state = initState, action) {
             }
          };
 
+      case userActions.CHANGE_USER_ROLE:
+         let { roleType, newRole } = action.payload;
+         roleType = roleType.toUpperCase();
+
+         const validRoleTypes = ['VIEW', 'ACCESS'];
+         if (!validRoleTypes.includes(roleType) || !newRole) return state;
+
+         // Replace only matching role type with the new role
+         const updatedUserRoles = state.currentUser.roles.map(role =>
+            role.roleType === roleType ? newRole : role
+         );
+
+         return {
+            ...state,
+            currentUser: { ...state.currentUser, roles: updatedUserRoles }
+         };
+
       case userActions.LOGOUT_USER:
          return { isLoggedIn: false, currentUser: {} };
 

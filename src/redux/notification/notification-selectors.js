@@ -1,16 +1,24 @@
 import { createSelector } from 'reselect';
-import * as portfolioSelectors from '../portfolio/portfolio-selectors';
 
-export const selectNotificationState = state => {
-   return state.notification;
-}
+export const selectNotification = state => state.notification;
 
-export const selectNotifications = createSelector(
-   [selectNotificationState, portfolioSelectors.selectCurrentPortfolio],
-   (notificationState, currentPortfolio) => notificationState[currentPortfolio?.name]
+export const selectUnreadNotifs = createSelector(
+   [selectNotification],
+   notif => notif.newNotifs
 );
 
-export const selectNotificationLoading = createSelector(
-   [selectNotificationState],
-   notification => notification.isLoading
+// This count will be displayed as a red mark in the Header component
+export const selectUnreadNotifsCount = createSelector(
+   [selectUnreadNotifs],
+   notifs => notifs.length
+);
+
+export const selectPastOneDayNotifsCount = createSelector(
+   selectNotification,
+   notif => notif.pastOneDayNotifsCount
+);
+
+export const selectLastReadNotif = createSelector(
+   selectNotification,
+   notif => notif.lastReadNotif
 );

@@ -5,7 +5,7 @@ import useValidator from './useValidator';
 const useInput = function ({ init: initValue, validators }) {
    const [inputValue, setInputValue] = useState(initValue);
    const { runValidators, validationErrors, setValidationErrors, pushError } =
-      useValidator({ inputValue: inputValue.trim(), validators });
+      useValidator({ inputValue: inputValue, validators });
 
    const clearInput = () => setInputValue('');
 
@@ -22,7 +22,7 @@ const useInput = function ({ init: initValue, validators }) {
       setValidationErrors,
       pushError,
       setInputValue,
-      clearInput
+      clearInput,
    };
 };
 

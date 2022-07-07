@@ -1,96 +1,146 @@
 .device-overview-charts {
-    color: #464648;
+   color: #464648;
 
-    & .card-footer {
-        background: transparent;
-        margin-top: 15px;
-    }
+   & .card-footer {
+      background: transparent;
+      margin-top: 15px;
+   }
 
-    & .d-flex {
-        justify-content: space-between;
-        @media screen and (max-width: 439px) {
-            flex-direction: column;
-        }
-        @media screen and (max-width: 1487px) and (min-width: 992px) {
-            justify-content: center!important;
-        }
-        @media screen and (max-width: 991px) and (min-width: 865px) {
-            justify-content: space-between!important;
-        }
-        @media screen and (max-width: 768px) and (min-width: 439px) {
-            justify-content:  space-between!important;
-        }
-    }
-
+   & .d-flex {
+      justify-content: space-between;
+      @media screen and (max-width: 439px) {
+         flex-direction: column;
+      }
+      @media screen and (max-width: 1487px) and (min-width: 992px) {
+         justify-content: center !important;
+      }
+      @media screen and (max-width: 991px) and (min-width: 865px) {
+         justify-content: space-between !important;
+      }
+      @media screen and (max-width: 768px) and (min-width: 439px) {
+         justify-content: space-between !important;
+      }
+   }
 }
 
 .dashboard-card {
-    @media screen and (max-width: 768px){
-        margin-top: 15px;
-    }
-    & :not(:first-child){
-        @media screen and (min-width: 769px) and (max-width: 992px){
-            margin-top: 15px;
-        }
-    }
-    & .card-body {
-        padding: 0;
-    }
+   
+   & .card-body {
+      padding: 0;
+   }
 
-    & .table-wrapper-scroll-y {
-        @media screen and (max-width: 1488px) and (min-width: 1200px){
-            height: 394px;
-        }
-        @media screen and (max-width: 1199px) and (min-width: 992px){
-            height: 418px;
-        }
-        @media screen and (max-width: 992px) and (min-width: 865px){
-            height: 245px;
-        }
-        @media screen and (max-width: 864px) and (min-width: 769px){
-            height: 394px;
-        }
-        position: relative;
-        height: 260px;
-        overflow: auto;
-        margin-right: 1px;
-    }
+   & .table-wrapper-scroll-y {
+      @media screen and (max-width: 1488px) and (min-width: 1200px) {
+         height: 394px;
+      }
+      @media screen and (max-width: 1199px) and (min-width: 992px) {
+         height: 418px;
+      }
+      @media screen and (max-width: 992px) and (min-width: 865px) {
+         height: 245px;
+      }
+      @media screen and (max-width: 864px) and (min-width: 769px) {
+         height: 394px;
+      }
+      position: relative;
+      height: 260px;
+      overflow: auto;
+      margin-right: 1px;
+   }
 
-    
+   table {
+      font-size: 12px;
+      color: #707070;
+      font-weight: 400;
 
-    table {
-        font-size: 12px;
-        color: #707070;
-        font-weight: 400;
+      thead {
+         position: sticky;
+         background: white;
+         top: 0;
+      }
 
-        thead {
-            position: sticky;
-            background: white;
-            top: 0;
-        }
+      tbody {
+         max-height: 230px;
+         overflow-y: auto;
+         width: 100%;
+      }
 
-        tbody {
-            height: 230px;
-            overflow-y: auto;
-            width: 100%;
-        }
+      & > :not(:first-child) {
+         border-top: none;
+      }
 
-        &> :not(:first-child) {
-            border-top: none;
-        }
-
-        & .table-title {
-            color: #464648;
-            font-size: 12px;
-            border-top: 1.2px solid rgb(27, 27, 27);
-        }
-    }
+      & .table-title {
+         color: #464648;
+         font-size: 12px;
+         border-top: 1.2px solid rgb(27, 27, 27);
+      }
+   }
 }
 
-.dash-widgets{
-    & div:nth-child(n+3){
-        @media screen and (min-width: 769px) and (max-width: 992px){
-            margin-top: 15px;
-        }
-    }
+.dash-widgets {
+   & div:nth-child(n + 3) {
+      @media screen and (min-width: 769px) and (max-width: 992px) {
+         margin-top: 15px;
+      }
+   }
+}
+
+.boder-dashed {
+   border-style: dashed;
+   border-width: 1px;
+}
+
+// Barcharts styling in Highlights page
+.chart-label {
+   //    display: flex;
+   //    align-items: center;
+   //    //    gap: 1rem;
+   font-size: 10px;
+   border: 1px solid #000;
+
+   & > * {
+      margin-left: 13px;
+      margin-block: auto;
+      //   display: flex;
+      //   align-items: center;
+      position: relative;
+
+      &::before {
+         content: '';
+         position: absolute;
+         top: 50%;
+         transform: translateY(-50%);
+         right: calc(100% + 3px);
+         width: 5px;
+         aspect-ratio: 1;
+         background: black;
+      }
+   }
+}
+
+
+//table head barchart style
+
+.tablehead-barchart .highcharts-container {
+   width: 300px;
+}
+
+.highcharts-data-label-color-0, .highcharts-data-label-color-1{
+position: relative;
+}
+
+.per-0{
+   position: absolute;
+}
+
+//no incidents text block style
+
+tr.noinc-txt:hover{
+   --bs-table-hover-bg: transparent;
+}
+
+.noinc-txt p{
+height: 150px;
+font-weight: 700;
+padding-left: 15px;
 }

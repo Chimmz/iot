@@ -1,0 +1,33 @@
+.rmsc.multi-select {
+   --rmsc-main: transparent !important;
+
+   & .dropdown {
+      &-container {
+         border: none !important;
+
+         &[aria-expanded='true'] {
+            border: none !important;
+
+            & .dropdown-heading {
+               border: 1px solid #27aae1;
+               box-shadow: 0px 0px 0px 4px rgba(82, 157, 232, 0.1);
+            }
+         }
+      }
+
+      &-heading {
+         border: 1px solid #ced4da;
+         border-radius: 0.25rem;
+
+         &.is-invalid {
+            border-color: red;
+         }
+      }
+      &-content *:not([type='input']) {
+         // background: green;
+      }
+      // &-content [type='checkbox'] + *{
+      //    background: green;
+      // }
+   }
+}

@@ -100,8 +100,13 @@ export const hasPasswordExceptions = function (errMsg) {
    );
 };
 
-export const isNotFuture = function (errMsg = 'Invalid date entered') {
-   const error = +new Date(this.userInput) > Date.now();
+export const isValidDate = function (errMsg = 'Invalid date entered') {
+   console.log(this.userInput);
+   const yr = new Date(this.userInput).getFullYear().toString();
+   const error =
+      yr.startsWith('0') ||
+      yr.length != 4 ||
+      +new Date(this.userInput) > Date.now();
 
    return getFeedback(
       statusTypes[error ? 'failed' : 'passed'],

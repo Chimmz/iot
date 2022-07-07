@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { NavLink } from 'react-router-dom';
-
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { NavLink, useSearchParams } from 'react-router-dom';
 // Redux standard imports
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -9,10 +8,9 @@ import * as userSelectors from '../../../redux/user/user-selectors';
 
 // The API instance for making HTTP requests
 import API from '../../../utils/apiUtils';
-
+import * as userUtils from '../../../redux/user/user-utils';
 // The data in this context is for this compon. and it's descendants
 import { incidentFormContext } from '../../../contexts/incidentFormContext';
-
 // The actual form
 import QuestionsForm from './form/QuestionsForm';
 // React-bootstrap
@@ -21,15 +19,29 @@ import './IncidentFormPage.scss';
 import useFetch from '../../../hooks/useFetch';
 import Spinner from '../../UI/spinner/Spinner';
 
-function IncidentFormPage({ userToken }) {
+const FORM_FILLED_BEFORE_MSG = 'This form has been filled before';
+
+function IncidentFormPage({ currentUser, userToken }) {
+   const [searchParams] = useSearchParams();
+   const incidentId = +searchParams.get('incidentid');
+
+   const [formFilledBefore, setFormFilledBefore] = useState(false);
+   const [formCannotBeFilled, setFormCannotBeFilled] = useState({ why: '' });
+   const {
+      sendRequest: sendGetRecordResponse,
+      loading: getRecordResponseRequestLoading,
+   } = useFetch();
+   const {
+      sendRequest: sendIncidentStatusRequest,
+      loading: incidentStatusRequestsLoading,
+   } = useFetch();
    const {
       sendRequest: sendGetIncidentTypesRequest,
-      loading: getIncidentTypesRequestLoading
+      loading: getIncidentTypesRequestLoading,
    } = useFetch();
-
    const {
       sendRequest: sendGetQuestionsRequest,
-      loading: getQuestionsRequestLoading
+      loading: getQuestionsRequestLoading,
    } = useFetch();
 
    const [incidentTypes, setIncidentTypes] = useState([]);
@@ -38,20 +50,88 @@ function IncidentFormPage({ userToken }) {
       clearAnswers,
       setValidationErrors,
       currentIncident,
-      setCurrentIncident
+      setCurrentIncident,
    } = useContext(incidentFormContext);
 
-   // prettier-ignore
+   const checkFormFilledBefore = async function (incidentId) {
+      try {
+         const res = await sendGetRecordResponse(
+            API.getIncidentRecordResponse(userToken, incidentId)
+         );
+         console.log(res);
+         if (res?.incidentRecordQuestions.length) setFormFilledBefore(true);
+         // setFormCannotBeFilled({ why: FORM_FILLED_BEFORE_MSG });
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
+   const checkIncidentStatus = useCallback(() => {
+      const req = sendIncidentStatusRequest(
+         API.getIncidentStatus(+incidentId, userToken)
+      );
+      req.then(status => {
+         if (!status?.code) throw Error('No status');
+         switch (status.code) {
+            case 'CLOSED_BY_USER':
+               const closedBy = userUtils.getFullName(status);
+               const isClosedByLoggedInUser =
+                  closedBy === userUtils.getFullName(currentUser);
+
+               setFormCannotBeFilled({
+                  why: `This incident has been marked as closed by ${
+                     isClosedByLoggedInUser ? 'you' : closedBy
+                  }`,
+               });
+               break;
+            default:
+               break;
+         }
+      }).catch(console.log);
+   }, [incidentId]);
+
+   // The control for this page starts here
+   useEffect(() => {
+      document.title = 'Incident Form Q&A';
+
+      if (!incidentId || isNaN(incidentId))
+         return setFormCannotBeFilled({
+            why: 'Request BLOCKED: Malformed Data.',
+         });
+      checkFormFilledBefore(incidentId);
+   }, []);
+
+   useEffect(() => {
+      if (!setFormFilledBefore) checkIncidentStatus(incidentId);
+   }, [setFormFilledBefore, checkIncidentStatus, incidentId]);
+
+   useEffect(() => {
+      if (formCannotBeFilled.why.length) return;
+
+      const res = sendGetIncidentTypesRequest(
+         API.getIncidentRecordTypes(userToken)
+      );
+      res.then(setIncidentTypes);
+      res.catch(err => {
+         setIncidentTypes([]);
+         console.log(err);
+      });
+   }, [formCannotBeFilled.why]);
+
    // This is a util
-   const getIncidentByName = name => incidentTypes?.find(inc => inc.name === name);
+   const getIncidentByName = name => {
+      return incidentTypes?.find(inc => inc.name === name);
+   };
+
+   useEffect(() => {
+      setValidationErrors({}); // Remove validation errors since new questions will be fetched
+      clearAnswers(); // Clear user's input since new questions will be fetched
+   }, [currentIncident]);
 
    const handleSelectIncident = async function (ev) {
       const selectedName = ev.target.value;
       if (selectedName.toLowerCase() === 'select incident type') return;
-
       setCurrentIncident(selectedName); // currentIncident will be global via Context
-      setValidationErrors({}); // Remove validation errors since new questions will be fetched
-      clearAnswers(); // Clear user's input since new questions will be fetched
 
       // Fetch questions based on selected incident type
       const questions = await sendGetQuestionsRequest(
@@ -64,20 +144,26 @@ function IncidentFormPage({ userToken }) {
       console.log(questions);
    };
 
-   useEffect(() => {
-      document.title = 'Incident Form Q&A';
+   if (
+      getRecordResponseRequestLoading ||
+      getIncidentTypesRequestLoading ||
+      getQuestionsRequestLoading ||
+      incidentStatusRequestsLoading
+   )
+      return <Spinner show />;
 
-      const onError = err => {
-         setIncidentTypes([]);
-         console.log(err);
-      };
-
-      const res = sendGetIncidentTypesRequest(
-         API.getIncidentRecordTypes(userToken)
+   if (formFilledBefore)
+      return (
+         <h3 className="d-flex justify-content-center vh-100 align-items-center fs-4 fw-normal text-primary mx-5 px-5">
+            This form has been filled before.
+         </h3>
       );
-      res.then(setIncidentTypes).catch(onError);
-   }, []);
-
+   if (formCannotBeFilled.why.length)
+      return (
+         <h3 className="d-flex justify-content-center vh-100 align-items-center fs-4 fw-normal text-primary mx-5 px-5">
+            {formCannotBeFilled.why}.
+         </h3>
+      );
    return (
       <div className="container my-md-5 body-font">
          <div className="row">
@@ -107,6 +193,7 @@ function IncidentFormPage({ userToken }) {
                            process.env.PUBLIC_URL +
                            '/images/icons/incident-form_icon.png'
                         }
+                        alt="Incident form icon"
                         className="img-fluid"
                      />
                      <span>
@@ -121,11 +208,10 @@ function IncidentFormPage({ userToken }) {
                         aria-label="Default select example"
                         onChange={handleSelectIncident}
                         className="form-select"
+                        value={currentIncident}
+                        // defaultValue="Select incident type"
                      >
-                        <option value={null} selected>
-                           Select incident type
-                        </option>
-
+                        <option>Select incident type</option>
                         {incidentTypes?.map(incid => (
                            <option key={incid.name} value={incid.name}>
                               {incid.name}
@@ -143,14 +229,12 @@ function IncidentFormPage({ userToken }) {
                />
             </div>
          </div>
-         <Spinner
-            show={getIncidentTypesRequestLoading || getQuestionsRequestLoading}
-         />
       </div>
    );
 }
 
 const mapStateToProps = createStructuredSelector({
-   userToken: userSelectors.selectUserToken
+   currentUser: userSelectors.selectCurrentUser,
+   userToken: userSelectors.selectUserToken,
 });
 export default connect(mapStateToProps)(IncidentFormPage);

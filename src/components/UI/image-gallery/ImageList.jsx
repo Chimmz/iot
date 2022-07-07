@@ -8,6 +8,7 @@ export const ImageList = (props) => {
 
     // this is to set the state of image clicked so that ImagePopup component is called and the rendered
     // view is changed.
+    console.log(clickedImgProp)
     const handleClick = (image,index) => {
         setclickedImgProp(image);
     }
@@ -22,6 +23,7 @@ export const ImageList = (props) => {
             <ImagePopup 
                 clickedImgProp={clickedImgProp} 
                 listOfImages={listOfImages}
+                onDismiss={handleClick}
             />         
         </div>
     )

@@ -34,7 +34,7 @@ function useValidator({ inputValue, validators }) {
       runValidators,
       validationErrors,
       setValidationErrors,
-      pushError
+      pushError,
    };
 }
 

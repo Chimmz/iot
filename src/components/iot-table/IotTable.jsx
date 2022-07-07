@@ -7,15 +7,13 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import './IotTable.scss';
 
 function IotTable(props) {
-   const { data, columns, options } = props;
+   const { data, columns, options, extraTableHeaderElements } = props;
    const dateFilterRef = useRef();
    const isIotPage = document.querySelector('#iotDeviceTable');
 
    const getTimePeriodTitle = timePeriod => {
-      // execute the below if block only for IoT Device page, since date filter is not applicable for this page 
-      if(isIotPage)
-         return `${timePeriod || props.currentTimePeriod}`;
-
+      // execute the below if block only for IoT Device page, since date filter is not applicable for this page
+      if (isIotPage) return `${timePeriod || props.currentTimePeriod}`;
 
       const [number, period] = `${timePeriod || props.currentTimePeriod}`.split(
          '-'
@@ -36,8 +34,14 @@ function IotTable(props) {
          'd-flex',
          'align-items-center'
       );
-      entriesDropdown?.insertAdjacentHTML('beforebegin', '<span>Show</span>');
-      entriesDropdown?.insertAdjacentHTML('afterend', '<span>entries</span>');
+      entriesDropdown?.insertAdjacentHTML(
+         'beforebegin',
+         '<span style="color:#4F5C69;">Show</span>'
+      );
+      entriesDropdown?.insertAdjacentHTML(
+         'afterend',
+         '<span style="color:#607080;">entries</span>'
+      );
 
       if (searchInput?.placeholder) searchInput.placeholder = '';
 
@@ -45,9 +49,15 @@ function IotTable(props) {
          ?.closest('.table-filters')
          ?.insertAdjacentElement('afterbegin', dateFilter);
 
+      extraTableHeaderElements?.forEach(elem => {
+         searchInput
+            ?.closest('.table-filters')
+            ?.insertAdjacentHTML('beforeend', elem);
+      });
+
       searchInput?.insertAdjacentHTML(
          'beforebegin',
-         '<span class="">Search:</span>'
+         '<span style="color: #464648;">Search:</span>'
       );
 
       searchInput?.parentElement?.classList?.add(
@@ -62,7 +72,7 @@ function IotTable(props) {
       <></>
    ) : (
       <Fragment>
-         { isIotPage ? <span></span> : <span>Date Range: </span>}
+         {isIotPage ? <span>Floors: </span> : <span>Date Range: </span>}
          <DropdownButton
             variant="outline-secondary"
             id="segmented-button-dropdown-1"
@@ -88,7 +98,7 @@ function IotTable(props) {
          <div className="date-filter" ref={dateFilterRef}>
             {timePeriodSelector}
          </div>
-
+         {/* {extraTableHeaderElements.length ? [...extraTableHeaderElements] : ''} */}
          <EukaDataTable columns={columns} data={data} options={options} />
       </Fragment>
    );

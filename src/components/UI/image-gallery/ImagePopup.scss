@@ -11,6 +11,7 @@
     background-size: cover;
     display: flex;
     align-items: center;
+    z-index: 999;
   }
   .overlay img:not(.overlay-image_bottom img) {
     display: block;

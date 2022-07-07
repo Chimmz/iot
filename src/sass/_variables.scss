@@ -15,6 +15,7 @@
    --text-color-dark: #353d46;
    --body-font: 'Bronova';
    --assistant: 'Assistant';
+   --hover-col: #0073e5;
 }
 
 $primary: #27aae1;
@@ -25,6 +26,10 @@ $light-white: #f0f0f0;
 a {
    text-decoration: none;
    color: var(--brand);
+}
+
+a:hover {
+   color: var(hover-col);
 }
 
 ul {

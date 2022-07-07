@@ -17,7 +17,7 @@ class API {
          method: 'POST',
          path: '/api/Auth/login',
          body: JSON.stringify({ username, password }),
-         headers: { 'Content-Type': 'application/json' }
+         headers: { 'Content-Type': 'application/json' },
       });
    }
 
@@ -31,8 +31,8 @@ class API {
          body: JSON.stringify({ userId, currentPassword, newPassword }),
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -41,7 +41,7 @@ class API {
       return this.#makeRequest({
          method: 'POST',
          path: `/api/Auth/ResetPassword?emailId=${email}`,
-         headers: { 'Content-Type': 'application/json' }
+         headers: { 'Content-Type': 'application/json' },
       });
    }
 
@@ -52,8 +52,8 @@ class API {
          path: `/api/Auth/getLegal?UserId=${userId}`,
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -65,8 +65,8 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -77,8 +77,8 @@ class API {
          path: `/api/Portfolio/getPortfolioByUserId?UserId=${userId}`,
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -91,8 +91,8 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -105,8 +105,8 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -119,8 +119,22 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
+      });
+   }
+
+   //Get incident by category
+   getIncidentByCategory(userToken, ...reqQuery) {
+      const [portfolioId, fromDate, toDate] = reqQuery;
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Incident/GetIncidentsByCategory?portfolioId=${portfolioId}&fromDate=${fromDate}&toDate=${toDate}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -131,8 +145,8 @@ class API {
          path: `/api/IncidentRecord/GetIncidentRecordTypes`,
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -144,8 +158,8 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -157,8 +171,8 @@ class API {
          body: JSON.stringify(body),
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -170,8 +184,21 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
+      });
+   }
+
+   // Check incident status
+   getIncidentStatus(incidentId, userToken) {
+      return this.#makeRequest({
+         path: `/api/Incident/GetIncidentStatus?IncidentID=${incidentId}`,
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -183,20 +210,31 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
       });
    }
 
    // Get all in groups
-   groupsGetAll(userToken) {
+   // groupsGetAll(userToken) {
+   //    return this.#makeRequest({
+   //       path: `/api/Group/GetAll`,
+   //       method: 'GET',
+   //       headers: {
+   //          'Content-Type': 'application/json',
+   //          Authorization: `Bearer ${userToken}`,
+   //       },
+   //    });
+   // }
+
+   GetAllGroupsByPortfolio(userToken, currentPortfolio) {
       return this.#makeRequest({
-         path: `/api/Group/GetAll`,
+         path: `/api/Group/GetAllByPortfolio?portfolioId=${currentPortfolio.portfolioHeaderId}`,
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -207,8 +245,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -218,8 +256,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -229,8 +267,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -240,8 +278,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -254,8 +292,8 @@ class API {
             mode: 'cors',
             'Content-Type': 'application/json',
             // Accept: 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -265,8 +303,8 @@ class API {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -276,8 +314,20 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
+      });
+   }
+
+   updateGroup(body, userToken) {
+      return this.#makeRequest({
+         path: `/api/Group/Update`,
+         method: 'POST',
+         body: JSON.stringify(body),
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -287,8 +337,8 @@ class API {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -300,8 +350,24 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
+      });
+   }
+
+   markNotificationAsRead(userToken, ...reqQueryParams) {
+      const [activityLogId, portfolio] = reqQueryParams;
+
+      return this.#makeRequest({
+         method: 'POST',
+         path: `/api/ActivityLog/UpdateIsRead?activityLogID=${activityLogId}&portfolioheaderid=${+portfolio.portfolioHeaderId}`,
+
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            // Accept: 'application/json',
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -314,8 +380,38 @@ class API {
          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userToken}`,
-            mode: 'no-cors'
-         }
+            mode: 'no-cors',
+         },
+      });
+   }
+
+   //Get Count of online, offline and never connected as group count
+   getCountIotDevices(userToken, ...reqQuery) {
+      const [portfolioId] = reqQuery;
+
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Sensor/GetCountByPortfolio?portfolioId=${portfolioId}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
+      });
+   }
+
+   //Get Count of online, offline and never connected as group count
+   getCountSuppressedDevice(userToken, ...reqQuery) {
+      const [portfolioId] = reqQuery;
+
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Sensor/GetSuppressedCount?PortfolioHeaderID=${portfolioId}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
       });
    }
 
@@ -327,8 +423,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -338,8 +434,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -349,19 +445,19 @@ class API {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${adminToken}`
-         }
+            Authorization: `Bearer ${adminToken}`,
+         },
       });
    }
 
-   deleteUser(userId, userToken) {
+   deleteUser(userId, modifiedBy, userToken) {
       return this.#makeRequest({
-         path: `/api/User/DeleteUser?UserID=${userId}`,
+         path: `/api/User/DeleteUser?UserID=${userId}&modifiedByUserId=${modifiedBy}`,
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -371,8 +467,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${userToken}`
-         }
+            Authorization: `Bearer ${userToken}`,
+         },
       });
    }
 
@@ -384,8 +480,8 @@ class API {
          body,
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${adminUserToken}`
-         }
+            Authorization: `Bearer ${adminUserToken}`,
+         },
       });
    }
 
@@ -395,8 +491,8 @@ class API {
          method: 'GET',
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${adminUserToken}`
-         }
+            Authorization: `Bearer ${adminUserToken}`,
+         },
       });
    }
 
@@ -407,8 +503,72 @@ class API {
          body,
          headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${adminUserToken}`
-         }
+            Authorization: `Bearer ${adminUserToken}`,
+         },
+      });
+   }
+   //  get Details for the user currently logged in
+   fetchUserDetails(userId, userToken) {
+      return this.#makeRequest({
+         path: `/api/User/GetUserDetails?userId=${userId}`,
+         method: 'GET',
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+         },
+      });
+   }
+   // Swagger Telemetry category get water consumption
+   getwaterConsumption(userToken, ...reqQuery) {
+      const [portfolioId, fromDate, toDate] = reqQuery;
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Telemetry/GetConsumptionbyPortfolioID?portfolioheaderid=${portfolioId}&fromDate=${fromDate}&toDate=${toDate}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
+      });
+   }
+   // Telemetry category get highest water cost
+   getHighestwaterUsage(userToken, ...reqQuery) {
+      const [portfolioId, fromDate, toDate] = reqQuery;
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Telemetry/GetHighestCostByPortfolioHeaderID?portfolioheaderid=${portfolioId}&fromDate=${fromDate}&toDate=${toDate}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
+      });
+   }
+
+   // Telemetry Get the water trends
+   getWaterTrends(userToken, ...reqQuery) {
+      const [portfolioId, fromDate, toDate] = reqQuery;
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Telemetry/GetWaterTrendsByPortfolioID?portfolioheaderid=${portfolioId}&fromDate=${fromDate}&toDate=${toDate}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
+      });
+   }
+   // Telemetry Get the leak based day based
+   getLeakDayWise(userToken, ...reqQuery) {
+      const [portfolioId, fromDate, toDate] = reqQuery;
+      return this.#makeRequest({
+         method: 'GET',
+         path: `/api/Telemetry/GetDayWiseLeakByPortfolio?portfolioheaderid=${portfolioId}&fromDate=${fromDate}&toDate=${toDate}`,
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userToken}`,
+            mode: 'no-cors',
+         },
       });
    }
 }

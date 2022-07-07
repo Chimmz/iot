@@ -4,37 +4,35 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 
 function DeleteConfirmation(props) {
-   const { show, bodyText, onDelete, close, onDeleteLoading } = props;
-   if (!show) return <></>;
+   const { show, confirmMsg, deleteAction, close, isDeleting } = props;
 
-   const handleDelete = () => onDelete().then(close);
-
-   const deleteBtnText = !onDeleteLoading ? (
-      'Yes, delete'
-   ) : (
-      <div className='d-flex align-items-center'>
+   const deleteBtnJSX = isDeleting ? (
+      <div className="d-flex align-items-center">
          Deleting...
-         <Spinner animation='border' size='sm' />
+         <Spinner animation="border" size="sm" />
       </div>
+   ) : (
+      'Yes, delete'
    );
 
+   if (!show) return <></>;
    return (
-      <Dialog show={show}>
+      <Dialog show={show} close={close} closable>
          <Dialog.Header>
             <h2>Delete Confirmation</h2>
          </Dialog.Header>
          <Dialog.Body>
-            {bodyText || 'Are you sure you want to delete?'}
+            {confirmMsg || 'Are you sure you want to delete?'}
          </Dialog.Body>
          <Dialog.Footer>
             <Button
-               variant='danger'
-               onClick={handleDelete}
-               disabled={onDeleteLoading}
-               style={{ color: 'red' }}>
-               {deleteBtnText}
+               variant="danger"
+               onClick={deleteAction}
+               disabled={isDeleting}
+            >
+               {deleteBtnJSX}
             </Button>
-            <Button variant='outline-dark ' onClick={close}>
+            <Button variant="outline-dark " onClick={close}>
                Cancel
             </Button>
          </Dialog.Footer>

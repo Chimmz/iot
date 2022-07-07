@@ -8,6 +8,21 @@ export const fetchIotDevices = function(portfolio, userToken){
     );
 }
 
+export const fetchCountByPortfolio = function(portfolio, userToken){
+    return API.getCountIotDevices(
+        userToken,
+        portfolio.portfolioHeaderId
+    );
+}
+
+
+export const fetchSuppressedDevice = function(portfolio, userToken){
+    return API.getCountSuppressedDevice(
+        userToken,
+        portfolio.portfolioHeaderId
+    );
+}
+
 
 export const handleFilterLoadingAsync = (fn, setLoading) => {
     setLoading(true);

@@ -15,75 +15,69 @@ import Spinner from '../../UI/spinner/Spinner';
 import IotTable from '../../iot-table/IotTable';
 
 import {
-   getTableColumns,
-   getTableData,
-   dateFilterPeriods,
-   sortByStartTime
+  getTableColumns,
+  getTableData,
+  dateFilterPeriods,
+  sortByStartTime
 } from './table-config.js';
 
 import PageHeader from '../../page-header/PageHeader';
 import './Telemetry.scss';
 
 function Telemetry(props) {
-   const { currentPortfolio, userToken } = props;
-   const [incidents, setIncidents] = useState(props.incidents);
-   const [currentTimePeriod, setCurrentTimePeriod] = useState('1-week');
-   const {
-      sendRequest: sendIncidentsRequest,
-      loading: incidentsRequestLoading
-   } = useFetch();
+  const { currentPortfolio, userToken } = props;
+  const [incidents, setIncidents] = useState(props.incidents);
+  const [currentTimePeriod, setCurrentTimePeriod] = useState('1-week');
+  const { sendRequest: sendIncidentsRequest, loading: incidentsRequestLoading } = useFetch();
 
-   const loadIncidents = async () => {
-      const [fromDate, toDate] =
-         dateUtils.getDateRangeBasedOnPeriod(currentTimePeriod);
+  const loadIncidents = async () => {
+    const [fromDate, toDate] = dateUtils.getDateRangeBasedOnPeriod(currentTimePeriod);
 
-      const req = sendIncidentsRequest(
-         API.getIncidentsByPortfolio(
-            userToken,
-            currentPortfolio.portfolioHeaderId,
-            fromDate.toISOString(),
-            toDate.toISOString()
-         )
-      );
-      req.then(setIncidents);
-      req.then(console.log);
-   };
+    const res = sendIncidentsRequest(
+      API.getIncidentsByPortfolio(
+        userToken,
+        currentPortfolio.portfolioHeaderId,
+        dateUtils.getDateOnly(fromDate),
+        dateUtils.getDateOnly(toDate)
+      )
+    );
+    const incids = await res;
+    setIncidents(incids);
+  };
 
-   // Load new incidents if either (current time period or portfolio) changes
-   useEffect(() => {
-      if (currentPortfolio) loadIncidents();
-   }, [currentTimePeriod, currentPortfolio?.portfolioHeaderId]);
+  // Load new incidents if either (current time period or portfolio) changes
+  useEffect(() => {
+    if (currentPortfolio) loadIncidents();
+  }, [currentTimePeriod, currentPortfolio?.portfolioHeaderId]);
 
-   const handlePeriodFilter = function (evKey) {
-      const selectedPeriod = evKey;
-      if (selectedPeriod === currentTimePeriod) return; // If active date filter was selected again
-      setCurrentTimePeriod(selectedPeriod);
-   };
+  const handlePeriodFilter = function (evKey) {
+    const selectedPeriod = evKey;
+    if (selectedPeriod === currentTimePeriod) return; // If active date filter was selected again
+    setCurrentTimePeriod(selectedPeriod);
+  };
 
-   return (
-      <>
-         <PageHeader location={useLocation()} />
-         <div
-            className='card px-3 py-5 flex-grow data-card telemetry'
-            id='telemetryTable'>
-            <h2 className='page-heading fw-600 mb-lg'>Telemetry </h2>
+  return (
+    <>
+      <PageHeader location={useLocation()} />
+      <div className='card px-3 py-5 flex-grow data-card telemetry' id='telemetryTable'>
+        <h2 className='page-heading fw-600 mb-lg'>Telemetry </h2>
 
-            <IotTable
-               columns={getTableColumns(props)}
-               data={getTableData(sortByStartTime(incidents, 'descend'))}
-               currentTimePeriod={currentTimePeriod}
-               dateFilterPeriods={dateFilterPeriods}
-               onDateFilter={handlePeriodFilter}
-            />
-         </div>
-         <Spinner show={incidentsRequestLoading} message='Getting records...' />
-      </>
-   );
+        <IotTable
+          columns={getTableColumns(props)}
+          data={getTableData(sortByStartTime(incidents, 'descend'))}
+          currentTimePeriod={currentTimePeriod}
+          dateFilterPeriods={dateFilterPeriods}
+          onDateFilter={handlePeriodFilter}
+        />
+      </div>
+      <Spinner show={incidentsRequestLoading} message='Getting records...' />
+    </>
+  );
 }
 
 const mapStateToProps = createStructuredSelector({
-   currentPortfolio: portfolioSelectors.selectCurrentPortfolio,
-   userToken: userSelectors.selectUserToken
+  currentPortfolio: portfolioSelectors.selectCurrentPortfolio,
+  userToken: userSelectors.selectUserToken
 });
 
 export default connect(mapStateToProps)(Telemetry);

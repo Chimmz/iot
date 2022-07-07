@@ -1,4 +1,5 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
+import useFetch from '../hooks/useFetch';
 import API from '../utils/apiUtils';
 
 export const configurationContext = createContext();
@@ -6,15 +7,17 @@ export const configurationContext = createContext();
 export const ConfigurationContextProvider = props => {
    const [allGroupDetails, setAllGroupDetails] = useState({});
    const [groupsUpdated, setGroupsUpdated] = useState(false);
+   const { sendRequest: sendGroupDetailsRequest, groupDetailsLoading } =
+      useFetch();
 
    const fetchGroupDetails = async (groupId, userToken) => {
-      try {
-         const res = await API.getGroupDetails(groupId, userToken);
+      const req = sendGroupDetailsRequest(
+         API.getGroupDetails(groupId, userToken)
+      );
+      req.then(res => {
          setAllGroupDetails(details => ({ ...details, [groupId]: res }));
-         return res;
-      } catch (err) {
-         return err;
-      }
+      });
+      req.catch(console.log);
    };
 
    return (
@@ -23,6 +26,7 @@ export const ConfigurationContextProvider = props => {
             allGroupDetails,
             setAllGroupDetails,
             fetchGroupDetails,
+            groupDetailsLoading,
             groupsUpdated,
             setGroupsUpdated
          }}
@@ -31,3 +35,5 @@ export const ConfigurationContextProvider = props => {
       </configurationContext.Provider>
    );
 };
+
+export const useConfigurationContext = () => useContext(configurationContext);
